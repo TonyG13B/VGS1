@@ -1,87 +1,23 @@
-VGS Application Deployment Guide (Detailed, Beginner-Friendly with AWS GUI Steps)
-Hello! This guide is made for absolute beginners—you don't need any tech background. We'll explain everything in simple words (e.g., "EC2" is Amazon's service for renting virtual computers in the cloud, like having a remote PC you control over the internet). We'll go step by step, with descriptions of what the screen looks like (like text versions of screenshots since we can't include real images), tips to avoid common mistakes, and easy fixes if something goes wrong. If you get stuck, the Troubleshooting section has simple solutions.
-Total Time: 45-60 minutes (most is waiting for things to install).
-What This Guide Does: Sets up the VGS app (a program for managing gaming transactions, like bets and wins, using basic storage without fancy searches) on its own Amazon server. This keeps it separate from testing and monitoring, as you requested.
-Important Note on Costs: This uses AWS's free tier where possible, but running the server costs about $0.04 per hour (turn it off when not using to save money— we'll show how).
-Prerequisites (What You Need Before Starting)
-These are the things you need ready. If you don't have them, set them up first—it's straightforward.
-AWS Account: If you don't have one, go to https://aws.amazon.com in your web browser. Click "Create an AWS Account" (orange button, top right). Enter your email, create a password, and add a credit card for verification (they won't charge for free tier stuff). It takes 5-10 minutes. (Text "screenshot": The page has a big header with "Start building in the console" and the create button.)
-A Computer with Internet: Any Windows or Mac is fine. You'll need to open a "terminal" or "command prompt" (a black window for typing commands—we'll tell you exactly what to type).
-Couchbase Capella Account: Go to https://cloud.couchbase.com, sign up for a free trial (email/password). Once in, click "Create Cluster", choose version 7.6, select "KV" service only (this is the simple storage—no "Query" or "Index" as per your requirements). Name it "VGS-Cluster", set a password, and note the "connection string" (looks like "couchbases://cb.<id>.cloud.couchbase.com"), username, and password. (Text "screenshot": Dashboard with "Create Cluster" button; form with service checkboxes—uncheck all except KV.) If stuck, use their live chat support.
-No Other Tools Needed Yet: We'll install everything during the guide.
-Tip: Write down your AWS login, Capella details, and any passwords on a note— you'll need them.
-Step 1: Launch Your AWS Server (Create an EC2 Instance)
-We'll rent a virtual computer from Amazon to run the VGS app.
-Open your web browser (like Chrome) and go to https://console.aws.amazon.com.
-Sign in with your AWS email and password. (Text "screenshot": Login page with Amazon logo, email field, "Continue" button. Then password page.)
-On the AWS home page (dashboard), there's a search bar at the top. Type "EC2" and press Enter. Click the "EC2" result in the list. (Text "screenshot": Dashboard with services grid; search shows "EC2" as top result with description "Virtual servers in the cloud".)
-On the EC2 page, look for the orange "Launch instance" button on the right and click it. (Text "screenshot": Page with left menu (Instances, etc.), main area with "Launch an instance" section and orange button.)
-In the launch form, under "Name and tags", type "VGS-App-Server" in the "Name" field (this labels your server so you can find it easily later).
-Scroll to "Application and OS Images (Amazon Machine Image)". In the search box, type "Ubuntu" and select "Ubuntu Server 22.04 LTS - HVM" from the quick start list (it's free and easy to use—Ubuntu is a type of operating system, like Windows but for servers).
-Under "Instance type", click the dropdown and choose "t3.medium" (this gives your server enough power—it's like choosing a computer's specs; t3.medium has 2 "brains" (CPUs) and 4GB "memory" (RAM), good for the app without being expensive).
-For "Key pair (login)", click "Create new key pair". In the form, name it "vgs-key", leave "Key pair type" as RSA, "Private key file format" as .pem, and click "Create key pair". Your browser will download a file called "vgs-key.pem"—save it in your Downloads folder (this file is like a digital key to "unlock" your server later; keep it safe and don't share it).
-Scroll to "Network settings". Click "Edit". Check the boxes for "Allow SSH traffic from" > "Anywhere-IPv4" (this lets you connect from your home computer). Also check "Allow HTTP traffic from the internet" and "Allow HTTPS traffic from the internet" (for the app to communicate).
-Still in Network settings, click "Add security group rule" to open more "doors" for the app. For the new rule:
-Type: Custom TCP
-Port range: 5100-5300 (type "5100-5300"—these are the numbers the VGS app uses to "talk" to other computers).
-Source: Anywhere-IPv4
-Description: "VGS App Ports"
-(Text "screenshot": A table with "Security group rule ID", "Type", "Protocol", "Port range", "Source", "Description". Your new row will be at the bottom.)
-Leave "Configure storage" as default (1 x 8 GiB gp3 volume—this is like the server's hard drive space, 8GB is plenty for the app).
-At the bottom right, click the orange "Launch instance" button. (Text "screenshot": A summary sidebar on the right shows your choices; the button is at the bottom.)
-The next page says "Launch status". Wait 2-3 minutes (refresh if needed). Click "View all instances" to see your new server. Click its name, and in the details pane, note the "Public IPv4 address" (e.g., 3.123.45.67)—this is your server's "phone number" for connecting. Also note the "Instance ID" (like i-0abc123) for reference.
-Tip: If you see an error like "Insufficient capacity", try a different "region" (top right of AWS page, change to "US East (Ohio)" or another).
-Congrats! Your server is ready.
-Step 2: Connect to Your Server (Using SSH to "Log In" Remotely)
-Now we'll "jump into" the server from your computer to install stuff.
-On your local computer, open Command Prompt (Windows: press Windows key, type "cmd", open it) or Terminal (Mac: Spotlight search "Terminal").
-In the window, type cd Downloads and press Enter (this goes to the folder where your key file is).
-Type ssh -i "vgs-key.pem" ubuntu@<your-public-ip> (replace <your-public-ip> with the address from Step 1, e.g., ubuntu@3.123.45.67) and press Enter. (Explanation: SSH is a secure way to connect; "ubuntu" is the default username for the server.)
-If it says "The authenticity of host can't be established... Are you sure you want to continue connecting (yes/no)?" , type "yes" and press Enter (this is a one-time security check).
-You're in! The screen will change to a prompt like "ubuntu@ip-172-31-45-26:~$" (the "~$" is where you type commands). (Text "screenshot": Black window with text like "Welcome to Ubuntu 22.04" followed by the prompt.)
-Tip: If "command not found", make sure you're in the right folder (use dir to list files—vgs-key.pem should be there). If "Permission denied", the key file might need permissions fixed (on Mac/Linux: chmod 400 vgs-key.pem; on Windows, it's usually OK).
-Step 3: Install the Tools on the Server (Java, Maven, etc.)
-We're now "inside" the server—let's install the software the VGS app needs. Type these commands one by one, pressing Enter after each.
-sudo apt update (updates the server's list of available software; "sudo" means "do this as the boss"—it might ask for a password, but the default is none, just press Enter. Takes 1 minute.)
-sudo apt install openjdk-21-jdk maven git unzip -y (installs Java—a programming language the app uses; Maven—a tool to build the app; Git—to download code; Unzip—to open zipped files. The "-y" says "yes to all questions". Takes 2-5 minutes.)
-Verify: Type java -version (should show "openjdk 21..."—if not, re-run the install). Then mvn -v (should show Maven 3.8 or higher).
-Tip: If it says "E: Unable to locate package", run sudo apt update again—it's just refreshing the list.
-Step 4: Get the Code and Configure It
-Type git clone https://github.com/TonyG13B/VGS-KV.git (downloads the optimized VGS code from your repo. Takes 1 minute. Git is like a downloader for code.)
-Type cd VGS-KV/vgs-application (enters the app folder).
-Type nano embedded-document/src main/resources/application.yml (opens a simple text editor called "nano" for the config file. "Nano" is like Notepad but in terminal.)
-In nano, use arrow keys to scroll to the "couchbase" section (looks like "couchbase:" followed by lines like "connection-string"). Fill in:
-connection-string: your Capella string (e.g., "couchbases://cb.<id>.cloud.couchbase.com")
-username: your Capella username
-password: your Capella password
-Delete any lines mentioning "query" or "index" (press Delete key to remove; this enforces pure KV as per your requirements).
-(Text "screenshot": Blue screen with text file; bottom has commands like "^O Write Out" (Ctrl+O to save).
-Save: Press Ctrl+O, press Enter to confirm file name, then Ctrl+X to exit.
-Repeat for the other pattern: Type cd ../transaction-index ; nano src/main/resources/application.yml, edit the same way, save.
-Tip: If nano is hard, you can download the file to your local computer (use "scp" command, but ask if needed), edit in Notepad, and upload back.
-Step 5: Build and Start the App
-Type mvn clean package (this "builds" the app like compiling a recipe into a meal. Takes 5-10 minutes; you'll see lots of text scrolling—normal).
-Type ./compile_and_start.sh (starts the app. This runs two "services" on ports 5100 and 5300—think of ports as doors the app uses to communicate.)
-Verify it's running: Type curl http://localhost:5100/actuator/health (should print something like {"status":"UP"}—this means the app is healthy. "Curl" is a tool to test web pages from terminal.)
-(Text "screenshot": Terminal shows JSON text like {"status":"UP"} if successful.)
-Tip: If build fails with "error", run mvn clean first to clear old files, then try again.
-Step 6: Test the Success Criteria (Make Sure It Meets Your Goals)
-Your goals: 100% write success, round data retrievable in ≤50ms, requests complete in ≤20ms under concurrency.
-Simple Test: Type curl -X POST http://localhost:5100/api/atomic/transaction -H \"Content-Type: application/json\" -d '{\"roundId\":\"test-round\", \"type\":\"BET\", \"amount\":50}' (this simulates a gaming transaction. "POST" means sending data.)
-Check Retrieval: Type curl http://localhost:5100/api/atomic/game-round/test-round (gets the data back. Look for timing in the output or logs to see if it's under 50ms).
-For Concurrency: Use the benchmarking guide to run full tests. Check logs with tail -f logs/embedded-document.log (press Ctrl+C to stop). Look for lines with "response time" and ensure they're under 20ms, no errors (100% success).
-If not meeting criteria, adjust configs (e.g., increase retries in code) or scale (see below).
-Tip: To time a command, use time curl ... (shows real time in seconds—multiply by 1000 for ms).
-Scaling and Maintenance (Making It Bigger or Fixing Issues)
-Scaling for More Users: If the app slows under load, go back to AWS Console > EC2 > Instances > select your server > Actions > Instance settings > Change instance type > choose "t3.large" > Apply (this gives more power; costs more, so change back when done).
-Stop to Save Money: In AWS, select instance > Actions > Instance state > Stop (turns off, no cost while stopped). Start again when needed.
-Update Code: If I make changes, type git pull in the VGS-KV folder, then re-build/run.
-Troubleshooting (Common Problems and Easy Fixes)
-Can't Launch Instance? Error like "No default VPC"? Change region (top right in AWS, pick another like "US West (Oregon)"). Or create a VPC (search "VPC" in AWS, use wizard).
-SSH Connection Fails? "Connection timed out"—check instance is "Running" in AWS, and security group allows port 22 from your IP (find your IP at whatismyip.com, add to rules). "Permission denied"—run chmod 400 vgs-key.pem (Mac/Linux) or check file permissions.
-Install Errors? "Package not found"—run sudo apt update again. If internet issue, check AWS network settings.
-Build Fails? Error like "Maven error"—run mvn -v to check version; if wrong, re-install. Or rm -rf ~/.m2 to clear cache (advanced, ask if needed).
-App Not UP? Check logs: tail logs/embedded-document.log—look for errors like "connection refused", fix Capella creds in config.
-Performance Not Meeting Criteria? For <20ms, check network (use closer AWS region to Capella). For 100% writes, increase CAS retries in code (edit service.java, add maxRetries = 5).
-General Help: Copy any error text into Google with "AWS [error]" for solutions, or use AWS free support chat (bottom of Console page).
-Congratulations! Your VGS app is deployed and ready. If it worked, move to the benchmarking guide to test it. If something's wrong, reply with the error, and I'll help fix it.
+# VGS Application Deployment Guide
+
+**Overview**: Deploys the optimized VGS app (pure KV, no N1QL) on a dedicated AWS/Ubuntu EC2 instance.
+
+**Prerequisites**:
+- AWS EC2 t3.medium instance (Ubuntu 22.04).
+- Java 21, Maven 3.8+ installed (`sudo apt update; sudo apt install openjdk-21-jdk maven`).
+- Couchbase Capella 7.6 cluster (KV-only bucket).
+
+**Steps**:
+1. Launch EC2: Use AWS Console, select Ubuntu 22.04, t3.medium, open ports 5100/5300 (app), 22 (SSH).
+2. SSH in: `ssh ubuntu@<instance-ip>`.
+3. Install dependencies: `sudo apt install git unzip`.
+4. Clone optimized repo: `git clone https://github.com/TonyG13B/VGS-KV.git` (or copy from your workspace).
+5. Navigate: `cd VGS-KV/vgs-application`.
+6. Configure: Edit `application.yml` with Capella details (connection string, credentialsno query params).
+7. Build: `mvn clean package`.
+8. Run: `./compile_and_start.sh` (starts embedded and index services).
+9. Verify: `curl http://localhost:5100/actuator/health` (should return \"UP\").
+10. Monitoring: Expose `/actuator/prometheus` for scraping.
+11. Success Criteria Check: Run internal tests to ensure 20ms requests (use included scripts).
+
+**Scaling/Troubleshooting**: Use auto-scaling groups for concurrency. Logs in `/logs/`. If CAS conflicts, adjust retries.
