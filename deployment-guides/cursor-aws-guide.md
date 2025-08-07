@@ -120,18 +120,18 @@ VNC allows you to see and control the graphical desktop from your local computer
 
 Tip: If VNC fails to start, try `vncserver -kill :1` then `vncserver` again. If you forget your password, you can reset it by deleting `~/.vnc/passwd` and running `vncserver` again.
 
-### Step 5: Download and Install Cursor IDE
-Now we'll download and install Cursor IDE on the server. The download URL has changed, so we'll use the official installation method.
+### Step 5: Download and Install Cursor IDE (or VS Code Alternative)
+Now we'll download and install Cursor IDE on the server. Since Cursor URLs are frequently changing, we'll try multiple methods and also provide VS Code as a reliable alternative.
 
-1. In the SSH terminal, add the Cursor repository: Type `curl -fsSL https://cursor.sh/install.sh | sh` and press Enter (this downloads and installs Cursor IDE using the official installer. Takes 2-3 minutes depending on your internet speed.)
+**Option A: Try Cursor IDE Installation**
 
-2. If the above command fails, try the alternative method: Type `curl -fsSL https://cursor.sh/install.sh | bash` and press Enter.
+1. In the SSH terminal, try the latest Cursor download: Type `wget https://github.com/cursor/cursor/releases/latest/download/cursor_latest_amd64.deb` and press Enter.
 
-3. If both fail, use the manual download method:
-   - Type `wget https://cursor.sh/linux/cursor_latest_amd64.deb` and press Enter
-   - If that fails, try: `wget https://github.com/getcursor/cursor/releases/latest/download/cursor_latest_amd64.deb` and press Enter
+2. If that fails, try the alternative URL: Type `wget https://cursor.sh/linux/cursor_latest_amd64.deb` and press Enter.
 
-4. Install Cursor (if using manual download): Type `sudo dpkg -i cursor_latest_amd64.deb` and press Enter (installs Cursor IDE. Takes 1 minute.)
+3. If both fail, try the direct download: Type `curl -L -o cursor_latest_amd64.deb "https://github.com/cursor/cursor/releases/latest/download/cursor_latest_amd64.deb"` and press Enter.
+
+4. Install Cursor (if download succeeded): Type `sudo dpkg -i cursor_latest_amd64.deb` and press Enter (installs Cursor IDE. Takes 1 minute.)
 
 5. Fix any dependency issues: Type `sudo apt --fix-broken install -y` and press Enter (fixes any missing dependencies. Takes 1 minute.)
 
@@ -148,7 +148,43 @@ Now we'll download and install Cursor IDE on the server. The download URL has ch
 
 8. Make the shortcut executable: Type `chmod +x ~/Desktop/cursor.desktop` and press Enter.
 
-Tip: If the download fails with "wget: command not found", install it with `sudo apt install wget -y`. If the installation fails, try `sudo apt update && sudo apt install -f` to fix broken packages. If the official installer fails, you can also try installing VS Code and then Cursor as an extension.
+**Option B: Install VS Code (Recommended Alternative)**
+
+If Cursor installation fails, VS Code is a very reliable alternative that works great for development:
+
+1. Install VS Code: Type `sudo apt update && sudo apt install code -y` and press Enter (installs VS Code. Takes 2-3 minutes.)
+
+2. If the above fails, use the official Microsoft repository:
+   ```bash
+   wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+   sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+   sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+   sudo apt update
+   sudo apt install code -y
+   ```
+
+3. Verify VS Code is installed: Type `code --version` and press Enter (should show the VS Code version number).
+
+4. Create a desktop shortcut: Type `echo "[Desktop Entry]
+   Name=VS Code
+   Comment=Code Editor
+   Exec=code
+   Icon=code
+   Terminal=false
+   Type=Application
+   Categories=Development;" > ~/Desktop/vscode.desktop` and press Enter.
+
+5. Make the shortcut executable: Type `chmod +x ~/Desktop/vscode.desktop` and press Enter.
+
+**Option C: Install Cursor as VS Code Extension (If VS Code is installed)**
+
+1. Launch VS Code: Type `code` and press Enter (opens VS Code).
+
+2. Install Cursor extension: Press Ctrl+Shift+X to open Extensions, search for "Cursor", and install the Cursor extension.
+
+3. Restart VS Code: Close and reopen VS Code to activate the Cursor extension.
+
+Tip: VS Code is often more stable in cloud environments and has excellent Git integration. Both editors will solve your file creation and GitHub pushing issues.
 
 ### Step 6: Set Up Git and GitHub Access
 We need to configure Git so you can push changes to your GitHub repository.
@@ -410,7 +446,4 @@ Since this uses a larger instance, here are ways to save money:
 4. **Monitor costs**: In AWS Console, go to "Billing" > "Cost Explorer" to track your spending.
 
 Congratulations! You now have a full development environment in the cloud with Cursor IDE. You can create files, edit code, and push to GitHub without any of the Windows PowerShell issues we were experiencing. The environment is powerful enough to handle all your VGS development needs, and you can access it from anywhere with an internet connection. If you need help with any specific development tasks or want to optimize the setup further, just let me know!
-<<<<<<< HEAD
 
-=======
->>>>>>> 61b689290c1c83da328808086af27894d8b530da
