@@ -121,17 +121,23 @@ VNC allows you to see and control the graphical desktop from your local computer
 Tip: If VNC fails to start, try `vncserver -kill :1` then `vncserver` again. If you forget your password, you can reset it by deleting `~/.vnc/passwd` and running `vncserver` again.
 
 ### Step 5: Download and Install Cursor IDE
-Now we'll download and install Cursor IDE on the server.
+Now we'll download and install Cursor IDE on the server. The download URL has changed, so we'll use the official installation method.
 
-1. In the SSH terminal, download Cursor IDE: Type `wget https://download.cursor.sh/linux/cursor_latest_amd64.deb` and press Enter (downloads the latest Cursor IDE for Linux. Takes 2-3 minutes depending on your internet speed.)
+1. In the SSH terminal, add the Cursor repository: Type `curl -fsSL https://cursor.sh/install.sh | sh` and press Enter (this downloads and installs Cursor IDE using the official installer. Takes 2-3 minutes depending on your internet speed.)
 
-2. Install Cursor: Type `sudo dpkg -i cursor_latest_amd64.deb` and press Enter (installs Cursor IDE. Takes 1 minute.)
+2. If the above command fails, try the alternative method: Type `curl -fsSL https://cursor.sh/install.sh | bash` and press Enter.
 
-3. Fix any dependency issues: Type `sudo apt --fix-broken install -y` and press Enter (fixes any missing dependencies. Takes 1 minute.)
+3. If both fail, use the manual download method:
+   - Type `wget https://cursor.sh/linux/cursor_latest_amd64.deb` and press Enter
+   - If that fails, try: `wget https://github.com/getcursor/cursor/releases/latest/download/cursor_latest_amd64.deb` and press Enter
 
-4. Verify Cursor is installed: Type `cursor --version` and press Enter (should show the Cursor version number).
+4. Install Cursor (if using manual download): Type `sudo dpkg -i cursor_latest_amd64.deb` and press Enter (installs Cursor IDE. Takes 1 minute.)
 
-5. Create a desktop shortcut: Type `echo "[Desktop Entry]
+5. Fix any dependency issues: Type `sudo apt --fix-broken install -y` and press Enter (fixes any missing dependencies. Takes 1 minute.)
+
+6. Verify Cursor is installed: Type `cursor --version` and press Enter (should show the Cursor version number).
+
+7. Create a desktop shortcut: Type `echo "[Desktop Entry]
    Name=Cursor
    Comment=Code Editor
    Exec=cursor
@@ -140,9 +146,9 @@ Now we'll download and install Cursor IDE on the server.
    Type=Application
    Categories=Development;" > ~/Desktop/cursor.desktop` and press Enter (creates a desktop icon for Cursor).
 
-6. Make the shortcut executable: Type `chmod +x ~/Desktop/cursor.desktop` and press Enter.
+8. Make the shortcut executable: Type `chmod +x ~/Desktop/cursor.desktop` and press Enter.
 
-Tip: If the download fails with "wget: command not found", install it with `sudo apt install wget -y`. If the installation fails, try `sudo apt update && sudo apt install -f` to fix broken packages.
+Tip: If the download fails with "wget: command not found", install it with `sudo apt install wget -y`. If the installation fails, try `sudo apt update && sudo apt install -f` to fix broken packages. If the official installer fails, you can also try installing VS Code and then Cursor as an extension.
 
 ### Step 6: Set Up Git and GitHub Access
 We need to configure Git so you can push changes to your GitHub repository.
@@ -404,4 +410,7 @@ Since this uses a larger instance, here are ways to save money:
 4. **Monitor costs**: In AWS Console, go to "Billing" > "Cost Explorer" to track your spending.
 
 Congratulations! You now have a full development environment in the cloud with Cursor IDE. You can create files, edit code, and push to GitHub without any of the Windows PowerShell issues we were experiencing. The environment is powerful enough to handle all your VGS development needs, and you can access it from anywhere with an internet connection. If you need help with any specific development tasks or want to optimize the setup further, just let me know!
+<<<<<<< HEAD
 
+=======
+>>>>>>> 61b689290c1c83da328808086af27894d8b530da
