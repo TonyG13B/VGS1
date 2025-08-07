@@ -1,0 +1,87 @@
+server:
+  port: 5100
+  address: 0.0.0.0
+  address: 0.0.0.0
+  tomcat:
+    threads:
+      max: 200        # Optimized for 4 vCPUs
+      min-spare: 50   # Keep threads ready
+    max-connections: 8192
+    accept-count: 100
+    connection-timeout: 20000
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+
+spring:
+  application:
+    name: vgs-kvpoc-embedded-document
+  task:
+    execution:
+      pool:
+        core-size: 8    # 2x vCPUs
+        max-size: 32    # 8x vCPUs
+        queue-capacity: 1000
+    scheduling:
+      pool:
+        size: 4         # 1x vCPUs
+  couchbase:
+    connection-string: ${COUCHBASE_CONNECTION_STRING}
+    username: ${COUCHBASE_USERNAME}
+    password: ${COUCHBASE_PASSWORD}
+    bucket-name: ${COUCHBASE_BUCKET_NAME:vgs-gaming}
+    # Optimized for single-document operations
+    max-http-connections: 30
+    max-allowed-query-connections: 30
+    connect-timeout: 15s
+    kv-timeout: 5s
+    query-timeout: 15s
+    # Retry configuration
+    num-kv-endpoints: 2
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics,caches
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        vgs.cache.get.latency: true
+        vgs.cache.put.latency: true
+        vgs.couchbase.connection.latency: true
+      percentiles:
+        http.server.requests: 0.5, 0.9, 0.95, 0.99
+        vgs.cache.get.latency: 0.5, 0.9, 0.95, 0.99
+        vgs.cache.put.latency: 0.5, 0.9, 0.95, 0.99
+        vgs.couchbase.connection.latency: 0.5, 0.9, 0.95, 0.99
+
+# Logging - Optimized for t3.xlarge performance
+logging:
+  level:
+    com.vgs.kvpoc.embedded: INFO    # Reduced from DEBUG for performance
+    com.couchbase: WARN             # Reduced from INFO for performance
+    org.springframework.web: WARN   # Reduced from INFO for performance
+    org.springframework.boot: WARN
+    org.apache.tomcat: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"  # Shorter logger names
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n"
+  file:
+    name: target/spring.log
+    max-size: 50MB                  # Smaller files for better I/O
+    max-history: 3                  # Fewer files to reduce disk usage
+  logback:
+    rollingpolicy:
+      max-file-size: 50MB
+      total-size-cap: 200MB
