@@ -38,7 +38,7 @@ import java.util.stream.IntStream;
  */
 @RestController
 @RequestMapping("/api/atomic")
-@CrossOrigin(origins = "*")
+// CORS is configured centrally via CorsConfig
 public class AtomicController {
 
     @Autowired

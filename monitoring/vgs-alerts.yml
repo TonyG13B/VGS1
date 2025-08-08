@@ -1,0 +1,35 @@
+groups:
+  - name: vgs_gaming_alerts
+    rules:
+      - alert: VGSHighLatencyP95
+        expr: histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (le)) > 0.020
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "HTTP P95 latency > 20ms"
+
+      - alert: VGSHighErrorRate
+        expr: sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m])) / sum(rate(http_server_requests_seconds_count[5m])) > 0.01
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HTTP error rate > 1%"
+
+      - alert: VGSKVLatencyHigh
+        expr: histogram_quantile(0.95, sum(rate(couchbase_kv_ops_latency_seconds_bucket[5m])) by (le)) > 0.010
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Couchbase KV P95 latency > 10ms"
+
+      - alert: VGSCacheHitLow
+        expr: (sum(rate(vgs_cache_hits_total[5m])) / (sum(rate(vgs_cache_hits_total[5m])) + sum(rate(vgs_cache_misses_total[5m])))) < 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Cache hit ratio < 80%"
+

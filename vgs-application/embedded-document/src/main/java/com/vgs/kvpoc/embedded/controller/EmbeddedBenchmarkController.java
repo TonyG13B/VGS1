@@ -44,12 +44,11 @@ import java.util.Map;
  * 
  * TECHNICAL DETAILS:
  * - Uses Spring Boot @RestController for web API endpoints
- * - @CrossOrigin allows dashboard to call from any domain
+ * - CORS is configured centrally via CorsConfig
  * - Returns JSON responses that can be easily parsed
  */
 @RestController
 @RequestMapping("/api/benchmark")
-@CrossOrigin(origins = "*")
 public class EmbeddedBenchmarkController {
     
     @Autowired

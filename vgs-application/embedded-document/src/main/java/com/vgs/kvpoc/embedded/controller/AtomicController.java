@@ -14,6 +14,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
 
 /**
  * ATOMIC TRANSACTION CONTROLLER - EMBEDDED DOCUMENT PATTERN
@@ -37,7 +41,7 @@ import java.util.stream.IntStream;
  */
 @RestController
 @RequestMapping("/api/atomic")
-@CrossOrigin(origins = "*")
+// CORS is configured centrally via CorsConfig
 public class AtomicController {
 
     @Autowired
@@ -342,5 +346,32 @@ public class AtomicController {
             
             return ResponseEntity.status(503).body(health);
         }
+    }
+
+    /**
+     * Enhanced error handling for validation errors
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("success", false);
+        errorResponse.put("error", "Validation failed");
+        errorResponse.put("details", ex.getBindingResult().getFieldErrors().stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .toList());
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    /**
+     * Enhanced error handling for general exceptions
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneralErrors(Exception ex) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("success", false);
+        errorResponse.put("error", "Internal server error");
+        errorResponse.put("message", ex.getMessage());
+        errorResponse.put("timestamp", System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

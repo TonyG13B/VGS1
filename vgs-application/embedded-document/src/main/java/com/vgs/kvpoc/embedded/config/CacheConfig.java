@@ -35,6 +35,16 @@ public class CacheConfig {
     @Autowired
     private MeterRegistry meterRegistry;
 
+    @Autowired
+    public void customizeMetricsCommonTags(MeterRegistry registry) {
+        String instance = java.util.Optional.ofNullable(System.getenv("HOSTNAME")).orElse("unknown");
+        registry.config().commonTags(
+            "application", "vgs-embedded",
+            "pattern", "EmbeddedDocument",
+            "instance", instance
+        );
+    }
+
     /**
      * Creates a Couchbase-native cache manager that uses Couchbase collections
      * for caching frequently accessed data.

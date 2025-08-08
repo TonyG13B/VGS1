@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
+// CORS is configured centrally via CorsConfig
 public class IndexGameController {
     
     @Autowired

@@ -41,7 +41,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")  // Allow requests from any domain (for development/testing)
+// CORS is configured centrally via CorsConfig
 public class EmbeddedGameController {
     
     /**
