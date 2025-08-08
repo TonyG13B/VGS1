@@ -61,16 +61,16 @@ import java.time.Duration;
 @Configuration
 public class SimpleCouchbaseConfig {
     
-    @Value("${couchbase.connection-string}")
+    @Value("${spring.couchbase.connection-string:couchbase://localhost}")
     private String connectionString;
     
-    @Value("${couchbase.username}")
+    @Value("${spring.couchbase.username:Administrator}")
     private String username;
     
-    @Value("${couchbase.password}")
+    @Value("${spring.couchbase.password:password}")
     private String password;
     
-    @Value("${couchbase.bucket-name}")
+    @Value("${spring.couchbase.bucket-name:vgs-gaming}")
     private String bucketName;
     
     /**
