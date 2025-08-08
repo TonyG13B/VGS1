@@ -280,3 +280,80 @@ com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequ
 2025-08-08 05:33:17.235 [main] INFO  c.v.k.e.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
 2025-08-08 05:33:17.758 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - Started EmbeddedDocumentApplication in 5.672 seconds (process running for 5.988)
 2025-08-08 05:33:17.880 [http-nio-0.0.0.0-5100-exec-1] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-08 05:35:26.540 [main] INFO  c.v.k.i.TransactionIndexApplication - Starting TransactionIndexApplication v1.0.0 using Java 21.0.7 with PID 25988 (/workspace/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar started by ubuntu in /workspace)
+2025-08-08 05:35:26.541 [main] INFO  c.v.k.i.TransactionIndexApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-08 05:35:26.804 [http-nio-0.0.0.0-5300-exec-5] INFO  c.v.k.i.c.CouchbaseNativeCacheManager - Creating cache: gameRounds
+2025-08-08 05:35:26.807 [http-nio-0.0.0.0-5300-exec-5] INFO  c.v.k.i.c.CouchbaseNativeCache - Using 'cache' collection for cache: gameRounds
+2025-08-08 05:35:28.004 [cb-events] WARN  com.couchbase.core - [com.couchbase.core][DnsSrvLookupFailedEvent][90ms] DNS SRV lookup failed (Shutdown in progress). This is expected if the there is no DNS SRV record associated with the hostname in the connection string. Will now try to bootstrap directly from the given hostname. To suppress this message, specify an IP address instead of a hostname (for example: 127.0.0.1 instead of localhost), specify more than one hostname, or set the `io.enableDnsSrv` client setting to false.
+java.lang.IllegalStateException: Shutdown in progress
+	at java.base/java.lang.ApplicationShutdownHooks.add(ApplicationShutdownHooks.java:67)
+	at java.base/java.lang.Runtime.addShutdownHook(Runtime.java:250)
+	at com.couchbase.client.core.deps.org.xbill.DNS.NioClient.selector(NioClient.java:63)
+	at com.couchbase.client.core.deps.org.xbill.DNS.NioUdpClient.sendAndReceiveUdp(NioUdpClient.java:173)
+	at com.couchbase.client.core.deps.org.xbill.DNS.DefaultIoClient.sendAndReceiveUdp(DefaultIoClient.java:44)
+	at com.couchbase.client.core.deps.org.xbill.DNS.SimpleResolver.sendAsync(SimpleResolver.java:390)
+	at com.couchbase.client.core.deps.org.xbill.DNS.SimpleResolver.sendAsync(SimpleResolver.java:351)
+	at com.couchbase.client.core.deps.org.xbill.DNS.ExtendedResolver$Resolution.send(ExtendedResolver.java:81)
+	at com.couchbase.client.core.deps.org.xbill.DNS.ExtendedResolver$Resolution.startAsync(ExtendedResolver.java:86)
+	at com.couchbase.client.core.deps.org.xbill.DNS.ExtendedResolver$Resolution.access$800(ExtendedResolver.java:34)
+	at com.couchbase.client.core.deps.org.xbill.DNS.ExtendedResolver.sendAsync(ExtendedResolver.java:310)
+	at com.couchbase.client.core.deps.org.xbill.DNS.lookup.LookupSession.lookupWithResolver(LookupSession.java:531)
+	at com.couchbase.client.core.deps.org.xbill.DNS.lookup.LookupSession.lambda$lookupWithCache$6(LookupSession.java:519)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at com.couchbase.client.core.deps.org.xbill.DNS.lookup.LookupSession.lookupWithCache(LookupSession.java:519)
+	at com.couchbase.client.core.deps.org.xbill.DNS.lookup.LookupSession.lookupUntilSuccess(LookupSession.java:486)
+	at com.couchbase.client.core.deps.org.xbill.DNS.lookup.LookupSession.lookupAsync(LookupSession.java:422)
+	at com.couchbase.client.core.deps.org.xbill.DNS.lookup.LookupSession.lookupAsync(LookupSession.java:404)
+	at com.couchbase.client.core.util.DnsSrvResolver.lambda$resolve$5(DnsSrvResolver.java:76)
+	at reactor.core.publisher.MonoDefer.subscribe(MonoDefer.java:45)
+	at reactor.core.publisher.Mono.subscribe(Mono.java:4568)
+	at reactor.core.publisher.Mono.blockOptional(Mono.java:1830)
+	at com.couchbase.client.core.util.DnsSrv.fromDnsSrv(DnsSrv.java:67)
+	at com.couchbase.client.core.util.ConnectionStringUtil.fromDnsSrvOrThrowIfTlsRequired(ConnectionStringUtil.java:274)
+	at com.couchbase.client.core.util.ConnectionStringUtil.seedNodesFromConnectionString(ConnectionStringUtil.java:86)
+	at com.couchbase.client.core.config.DefaultConfigurationProvider.lambda$launchSeedNodeResolver$0(DefaultConfigurationProvider.java:228)
+	at reactor.core.publisher.MonoRunnable.call(MonoRunnable.java:73)
+	at reactor.core.publisher.MonoRunnable.call(MonoRunnable.java:32)
+	at reactor.core.publisher.FluxSubscribeOnCallable$CallableSubscribeOnSubscription.run(FluxSubscribeOnCallable.java:228)
+	at reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:68)
+	at reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:28)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+	Suppressed: java.lang.Exception: #block terminated with an error
+		at reactor.core.publisher.BlockingOptionalMonoSubscriber.blockingGet(BlockingOptionalMonoSubscriber.java:129)
+		at reactor.core.publisher.Mono.blockOptional(Mono.java:1831)
+		... 14 common frames omitted
+2025-08-08 05:35:28.539 [SpringApplicationShutdownHook] INFO  c.v.k.i.s.CouchbaseConnectionManager - 🔌 Couchbase cluster disconnected
+2025-08-08 05:35:29.622 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1507ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_rounds, isDefault=false}) failed: FAILED {"coreId":"0xdc5323100000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0xdc5323100000001","idempotent":true,"reason":"TIMEOUT","requestId":2,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_rounds","opaque":"0x1","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:35:29.622 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1507ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_transactions, isDefault=false}) failed: FAILED {"coreId":"0xdc5323100000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0xdc5323100000001","idempotent":true,"reason":"TIMEOUT","requestId":3,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_transactions","opaque":"0x2","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:35:30.124 [cb-events] WARN  com.couchbase.core - [com.couchbase.core][InitGlobalConfigFailedEvent][2050ms] Initializing the global config failed: UNKNOWN {"coreId":"0xdc5323100000001"}
+com.couchbase.client.core.error.ConfigException: Could not locate a single global configuration
+	at com.couchbase.client.core.config.DefaultConfigurationProvider.lambda$loadAndRefreshGlobalConfig$9(DefaultConfigurationProvider.java:382)
+	at reactor.core.publisher.MonoFlatMap$FlatMapMain.onNext(MonoFlatMap.java:132)
+	at reactor.core.publisher.FluxSwitchIfEmpty$SwitchIfEmptySubscriber.onNext(FluxSwitchIfEmpty.java:74)
+	at reactor.core.publisher.MonoNext$NextSubscriber.onNext(MonoNext.java:82)
+	at reactor.core.publisher.FluxReplay$SizeBoundReplayBuffer.replayNormal(FluxReplay.java:877)
+	at reactor.core.publisher.FluxReplay$SizeBoundReplayBuffer.replay(FluxReplay.java:965)
+	at reactor.core.publisher.SinkManyReplayProcessor.tryEmitNext(SinkManyReplayProcessor.java:477)
+	at reactor.core.publisher.SinkManySerialized.tryEmitNext(SinkManySerialized.java:100)
+	at com.couchbase.client.core.config.DefaultConfigurationProvider.setSeedNodes(DefaultConfigurationProvider.java:1053)
+	at com.couchbase.client.core.config.DefaultConfigurationProvider.lambda$launchSeedNodeResolver$0(DefaultConfigurationProvider.java:235)
+	at reactor.core.publisher.MonoRunnable.call(MonoRunnable.java:73)
+	at reactor.core.publisher.MonoRunnable.call(MonoRunnable.java:32)
+	at reactor.core.publisher.FluxSubscribeOnCallable$CallableSubscribeOnSubscription.run(FluxSubscribeOnCallable.java:228)
+	at reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:68)
+	at reactor.core.scheduler.SchedulerTask.call(SchedulerTask.java:28)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-08-08 05:35:31.204 [main] INFO  c.v.k.i.s.CouchbaseConnectionManager - ✅ Optimized Couchbase cluster connection established for bucket: transaction_index
+2025-08-08 05:35:32.162 [main] INFO  c.v.k.i.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
+2025-08-08 05:35:32.589 [main] INFO  c.v.k.i.TransactionIndexApplication - Started TransactionIndexApplication in 6.453 seconds (process running for 6.759)
+2025-08-08 05:35:32.681 [SpringApplicationShutdownHook] INFO  c.v.k.i.s.CouchbaseConnectionManager - 🔌 Couchbase cluster disconnected
