@@ -190,3 +190,93 @@ Caused by: com.couchbase.client.core.error.InvalidArgumentException: Username ca
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:140)
 	... 67 common frames omitted
+2025-08-08 05:28:41.897 [main] INFO  c.v.k.i.TransactionIndexApplication - Starting TransactionIndexApplication v1.0.0 using Java 21.0.7 with PID 19415 (/workspace/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar started by ubuntu in /workspace)
+2025-08-08 05:28:41.899 [main] INFO  c.v.k.i.TransactionIndexApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-08 05:28:42.968 [main] INFO  o.a.c.c.StandardService - Starting service [Tomcat]
+2025-08-08 05:28:42.968 [main] INFO  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2025-08-08 05:28:43.001 [main] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2025-08-08 05:28:45.069 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1509ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_rounds, isDefault=false}) failed: FAILED {"coreId":"0x8ea449ab00000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0x8ea449ab00000001","idempotent":true,"reason":"TIMEOUT","requestId":1,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_rounds","opaque":"0x0","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:28:45.071 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1501ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_transactions, isDefault=false}) failed: FAILED {"coreId":"0x8ea449ab00000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0x8ea449ab00000001","idempotent":true,"reason":"TIMEOUT","requestId":2,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_transactions","opaque":"0x1","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:28:46.212 [main] INFO  c.v.k.i.s.CouchbaseConnectionManager - ✅ Optimized Couchbase cluster connection established for bucket: transaction_index
+2025-08-08 05:28:47.156 [main] INFO  c.v.k.i.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
+2025-08-08 05:28:47.651 [main] INFO  c.v.k.i.TransactionIndexApplication - Started TransactionIndexApplication in 6.268 seconds (process running for 6.625)
+2025-08-08 05:29:01.060 [http-nio-0.0.0.0-5300-exec-1] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-08 05:29:01.242 [SpringApplicationShutdownHook] INFO  c.v.k.i.s.CouchbaseConnectionManager - 🔌 Couchbase cluster disconnected
+2025-08-08 05:29:16.813 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - Starting EmbeddedDocumentApplication v1.0.0 using Java 21.0.7 with PID 20078 (/workspace/vgs-application/embedded-document/target/embedded-document-pattern-1.0.0.jar started by ubuntu in /workspace)
+2025-08-08 05:29:16.815 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-08 05:29:17.689 [main] INFO  o.a.c.c.StandardService - Starting service [Tomcat]
+2025-08-08 05:29:17.689 [main] INFO  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2025-08-08 05:29:17.711 [main] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2025-08-08 05:29:21.416 [main] INFO  c.v.k.e.s.CouchbaseConnectionManager - ✅ Optimized Couchbase cluster connection established for bucket: embedded_document
+2025-08-08 05:29:21.452 [main] INFO  c.v.k.e.s.EmbeddedGameService - Initialized EmbeddedGameService with optimized connection management
+2025-08-08 05:29:21.471 [main] INFO  c.v.k.e.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
+2025-08-08 05:29:21.825 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - Started EmbeddedDocumentApplication in 5.398 seconds (process running for 5.676)
+2025-08-08 05:29:41.196 [http-nio-0.0.0.0-5100-exec-1] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-08 05:29:41.366 [SpringApplicationShutdownHook] INFO  c.v.k.e.s.CouchbaseConnectionManager - 🔌 Couchbase cluster disconnected
+2025-08-08 05:29:48.166 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - Starting EmbeddedDocumentApplication v1.0.0 using Java 21.0.7 with PID 20781 (/workspace/vgs-application/embedded-document/target/embedded-document-pattern-1.0.0.jar started by ubuntu in /workspace)
+2025-08-08 05:29:48.173 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-08 05:29:49.386 [main] INFO  o.a.c.c.StandardService - Starting service [Tomcat]
+2025-08-08 05:29:49.387 [main] INFO  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2025-08-08 05:29:49.418 [main] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2025-08-08 05:29:53.434 [main] INFO  c.v.k.e.s.CouchbaseConnectionManager - ✅ Optimized Couchbase cluster connection established for bucket: embedded_document
+2025-08-08 05:29:53.489 [main] INFO  c.v.k.e.s.EmbeddedGameService - Initialized EmbeddedGameService with optimized connection management
+2025-08-08 05:29:53.518 [main] INFO  c.v.k.e.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
+2025-08-08 05:29:53.986 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - Started EmbeddedDocumentApplication in 6.313 seconds (process running for 6.713)
+2025-08-08 05:30:12.339 [http-nio-0.0.0.0-5100-exec-1] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-08 05:30:12.520 [SpringApplicationShutdownHook] INFO  c.v.k.e.s.CouchbaseConnectionManager - 🔌 Couchbase cluster disconnected
+2025-08-08 05:30:24.075 [main] INFO  c.v.k.i.TransactionIndexApplication - Starting TransactionIndexApplication v1.0.0 using Java 21.0.7 with PID 21504 (/workspace/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar started by ubuntu in /workspace)
+2025-08-08 05:30:24.076 [main] INFO  c.v.k.i.TransactionIndexApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-08 05:30:25.004 [main] INFO  o.a.c.c.StandardService - Starting service [Tomcat]
+2025-08-08 05:30:25.005 [main] INFO  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2025-08-08 05:30:25.022 [main] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2025-08-08 05:30:26.927 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1504ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_rounds, isDefault=false}) failed: FAILED {"coreId":"0x1c31fcff00000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0x1c31fcff00000001","idempotent":true,"reason":"TIMEOUT","requestId":1,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_rounds","opaque":"0x0","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:30:27.029 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1502ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_transactions, isDefault=false}) failed: FAILED {"coreId":"0x1c31fcff00000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0x1c31fcff00000001","idempotent":true,"reason":"TIMEOUT","requestId":5,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_transactions","opaque":"0x4","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:30:28.092 [main] INFO  c.v.k.i.s.CouchbaseConnectionManager - ✅ Optimized Couchbase cluster connection established for bucket: transaction_index
+2025-08-08 05:30:29.032 [main] INFO  c.v.k.i.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
+2025-08-08 05:30:29.407 [main] INFO  c.v.k.i.TransactionIndexApplication - Started TransactionIndexApplication in 5.692 seconds (process running for 5.996)
+2025-08-08 05:30:33.446 [http-nio-0.0.0.0-5300-exec-1] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-08 05:30:33.479 [http-nio-0.0.0.0-5300-exec-1] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Unrecognized token 'roundId': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')]
+2025-08-08 05:30:33.589 [SpringApplicationShutdownHook] INFO  c.v.k.i.s.CouchbaseConnectionManager - 🔌 Couchbase cluster disconnected
+2025-08-08 05:31:43.466 [main] INFO  c.v.k.i.TransactionIndexApplication - Starting TransactionIndexApplication v1.0.0 using Java 21.0.7 with PID 22584 (/workspace/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar started by ubuntu in /workspace)
+2025-08-08 05:31:43.467 [main] INFO  c.v.k.i.TransactionIndexApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-08 05:31:44.407 [main] INFO  o.a.c.c.StandardService - Starting service [Tomcat]
+2025-08-08 05:31:44.408 [main] INFO  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2025-08-08 05:31:44.426 [main] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2025-08-08 05:31:46.459 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1503ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_rounds, isDefault=false}) failed: FAILED {"coreId":"0x65bb039000000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0x65bb039000000001","idempotent":true,"reason":"TIMEOUT","requestId":1,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_rounds","opaque":"0x0","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:31:46.462 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1501ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_transactions, isDefault=false}) failed: FAILED {"coreId":"0x65bb039000000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0x65bb039000000001","idempotent":true,"reason":"TIMEOUT","requestId":5,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_transactions","opaque":"0x4","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:31:47.592 [main] INFO  c.v.k.i.s.CouchbaseConnectionManager - ✅ Optimized Couchbase cluster connection established for bucket: transaction_index
+2025-08-08 05:31:48.530 [main] INFO  c.v.k.i.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
+2025-08-08 05:31:48.988 [main] INFO  c.v.k.i.TransactionIndexApplication - Started TransactionIndexApplication in 5.918 seconds (process running for 6.244)
+2025-08-08 05:31:49.842 [http-nio-0.0.0.0-5300-exec-1] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-08 05:31:49.930 [http-nio-0.0.0.0-5300-exec-3] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Unrecognized token 'roundId': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')]
+2025-08-08 05:31:50.035 [SpringApplicationShutdownHook] INFO  c.v.k.i.s.CouchbaseConnectionManager - 🔌 Couchbase cluster disconnected
+2025-08-08 05:33:05.375 [main] INFO  c.v.k.i.TransactionIndexApplication - Starting TransactionIndexApplication v1.0.0 using Java 21.0.7 with PID 24105 (/workspace/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar started by ubuntu in /workspace)
+2025-08-08 05:33:05.376 [main] INFO  c.v.k.i.TransactionIndexApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-08 05:33:06.459 [main] INFO  o.a.c.c.StandardService - Starting service [Tomcat]
+2025-08-08 05:33:06.459 [main] INFO  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2025-08-08 05:33:06.477 [main] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2025-08-08 05:33:08.555 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1506ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_rounds, isDefault=false}) failed: FAILED {"coreId":"0x752bd3ff00000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0x752bd3ff00000001","idempotent":true,"reason":"TIMEOUT","requestId":1,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_rounds","opaque":"0x0","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:33:08.557 [cb-events] WARN  c.couchbase.config - [com.couchbase.config][CollectionMapRefreshFailedEvent][1501ms] Collection Map refresh (CollectionIdentifier{bucket='transaction_index', scope=_default, collection=game_transactions, isDefault=false}) failed: FAILED {"coreId":"0x752bd3ff00000001"}
+com.couchbase.client.core.error.UnambiguousTimeoutException: GetCollectionIdRequest, Reason: TIMEOUT {"cancelled":true,"completed":true,"coreId":"0x752bd3ff00000001","idempotent":true,"reason":"TIMEOUT","requestId":2,"requestType":"GetCollectionIdRequest","retried":12,"retryReasons":["BUCKET_OPEN_IN_PROGRESS"],"service":{"bucket":"transaction_index","collection":"game_transactions","opaque":"0x1","scope":"_default","type":"kv","vbucket":0},"timeoutMs":1500}
+2025-08-08 05:33:09.658 [main] INFO  c.v.k.i.s.CouchbaseConnectionManager - ✅ Optimized Couchbase cluster connection established for bucket: transaction_index
+2025-08-08 05:33:10.600 [main] INFO  c.v.k.i.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
+2025-08-08 05:33:10.994 [main] INFO  c.v.k.i.TransactionIndexApplication - Started TransactionIndexApplication in 6.064 seconds (process running for 6.402)
+2025-08-08 05:33:11.679 [http-nio-0.0.0.0-5300-exec-2] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-08 05:33:11.751 [http-nio-0.0.0.0-5300-exec-1] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Unrecognized token 'roundId': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')]
+2025-08-08 05:33:12.438 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - Starting EmbeddedDocumentApplication v1.0.0 using Java 21.0.7 with PID 24314 (/workspace/vgs-application/embedded-document/target/embedded-document-pattern-1.0.0.jar started by ubuntu in /workspace)
+2025-08-08 05:33:12.440 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - No active profile set, falling back to 1 default profile: "default"
+2025-08-08 05:33:13.402 [main] INFO  o.a.c.c.StandardService - Starting service [Tomcat]
+2025-08-08 05:33:13.402 [main] INFO  o.a.c.c.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2025-08-08 05:33:13.419 [main] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2025-08-08 05:33:17.158 [main] INFO  c.v.k.e.s.CouchbaseConnectionManager - ✅ Optimized Couchbase cluster connection established for bucket: embedded_document
+2025-08-08 05:33:17.208 [main] INFO  c.v.k.e.s.EmbeddedGameService - Initialized EmbeddedGameService with optimized connection management
+2025-08-08 05:33:17.235 [main] INFO  c.v.k.e.c.CouchbaseNativeCacheManager - Initialized Couchbase Native Cache Manager
+2025-08-08 05:33:17.758 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - Started EmbeddedDocumentApplication in 5.672 seconds (process running for 5.988)
+2025-08-08 05:33:17.880 [http-nio-0.0.0.0-5100-exec-1] INFO  o.a.c.c.C.[.[.[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
