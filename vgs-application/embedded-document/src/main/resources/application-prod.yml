@@ -1,0 +1,62 @@
+
+# Production Configuration for VGS Embedded Document Service
+server:
+  port: 5100
+  netty:
+    connection-timeout: 2s
+  compression:
+    enabled: true
+
+spring:
+  application:
+    name: vgs-embedded-document-prod
+  profiles:
+    active: prod
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=50000,expireAfterWrite=10m
+  task:
+    execution:
+      pool:
+        core-size: 16
+        max-size: 32
+        queue-capacity: 500
+
+# Enhanced Couchbase Configuration
+couchbase:
+  pool:
+    min-endpoints: 8
+    max-endpoints: 24
+  timeout:
+    connect: 5s
+    kv: 1500ms
+  retry:
+    max-attempts: 3
+    backoff: 100ms
+
+# Performance Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+
+# Optimized Logging
+logging:
+  level:
+    com.vgs: INFO
+    com.couchbase: WARN
+    org.springframework: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

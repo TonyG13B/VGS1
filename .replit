@@ -6,3 +6,57 @@ channel = "stable-25_05"
 
 [deployment]
 run = ["sh", "-c", "sudo"]
+
+[workflows]
+runButton = "Start Embedded Service"
+
+[[workflows.workflow]]
+name = "Start Embedded Service"
+author = 44525175
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd vgs-application/embedded-document"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "mvn clean package -DskipTests"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "java -Xms1g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/embedded-document-pattern-1.0.0.jar --spring.profiles.active=replit"
+
+[[workflows.workflow]]
+name = "Start Transaction Index Service"
+author = 44525175
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd vgs-application/transaction-index"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "mvn clean package -DskipTests"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "java -Xms1g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/transaction-index-pattern-1.0.0.jar --spring.profiles.active=replit"
+
+[[workflows.workflow]]
+name = "Run Load Tests"
+author = 44525175
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd benchmark-testing"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pip install -r requirements.txt"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "locust -f locustfile.py --host=http://0.0.0.0:5000 --users=100 --spawn-rate=10 --run-time=2m --headless"

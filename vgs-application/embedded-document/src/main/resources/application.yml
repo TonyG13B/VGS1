@@ -14,13 +14,17 @@ server:
 
 spring:
   application:
-    name: vgs-kvpoc-embedded-document
+    name: vgs-embedded-document
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=10000,expireAfterWrite=5m
   task:
     execution:
       pool:
-        core-size: 8    # 2x vCPUs
-        max-size: 32    # 8x vCPUs
-        queue-capacity: 1000
+        core-size: 8
+        max-size: 16
+        queue-capacity: 100
     scheduling:
       pool:
         size: 4         # 1x vCPUs

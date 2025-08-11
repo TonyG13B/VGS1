@@ -1,0 +1,35 @@
+
+# Replit Production Configuration
+server:
+  port: 5000
+  address: 0.0.0.0
+
+spring:
+  profiles:
+    active: replit
+  application:
+    name: vgs-embedded-replit
+
+# Optimized for Replit environment
+couchbase:
+  pool:
+    min-endpoints: 4
+    max-endpoints: 8
+  timeout:
+    connect: 8s
+    kv: 2s
+
+management:
+  server:
+    port: 5001
+    address: 0.0.0.0
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+      base-path: /actuator
+
+logging:
+  level:
+    root: INFO
+    com.vgs: DEBUG

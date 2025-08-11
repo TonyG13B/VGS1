@@ -1,7 +1,8 @@
 import time
 import random
+import logging
+from datetime import datetime
 from locust import HttpUser, task, between, events
-from locust.exception import StopUser
 
 
 class VGSUser(HttpUser):
@@ -14,7 +15,8 @@ class VGSUser(HttpUser):
         self.round_id = f"test-round-{random.randint(1000, 99999)}"
         self.transaction_count = 0
         self.player_id = f"player-{random.randint(1, 10000)}"
-        
+        self.start_time = time.time()
+
         # Pre-warm connection
         try:
             self.client.get("/actuator/health", timeout=5)
@@ -115,8 +117,8 @@ def my_request_handler(
     **kwargs,
 ):
     if exception:
-        print(f"Request failed: {name} - {exception}")
+        logging.error(f"Request failed: {name} - {exception}")
     elif response and response.status_code >= 400:
-        print(f"Request error: {name} - HTTP {response.status_code}")
+        logging.warning(f"Request error: {name} - HTTP {response.status_code}")
 
 # Run with: locust --host=http://<vgs-ip>:5100 --users=500 --run-time=5m --headless --csv=locust_results
