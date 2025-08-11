@@ -32,3 +32,67 @@ public class CacheService {
         }
     }
 }
+package com.vgs.kvpoc.embedded.service;
+
+import org.springframework.stereotype.Service;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.time.LocalDateTime;
+import java.time.Duration;
+
+@Service
+public class CacheService {
+    
+    private final ConcurrentMap<String, CacheEntry> cache = new ConcurrentHashMap<>();
+    private final Duration defaultTtl = Duration.ofMinutes(5);
+    
+    public void put(String key, Object value) {
+        put(key, value, defaultTtl);
+    }
+    
+    public void put(String key, Object value, Duration ttl) {
+        CacheEntry entry = new CacheEntry(value, LocalDateTime.now().plus(ttl));
+        cache.put(key, entry);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, Class<T> type) {
+        CacheEntry entry = cache.get(key);
+        if (entry == null || entry.isExpired()) {
+            cache.remove(key);
+            return null;
+        }
+        return (T) entry.getValue();
+    }
+    
+    public void evict(String key) {
+        cache.remove(key);
+    }
+    
+    public void clear() {
+        cache.clear();
+    }
+    
+    // Cleanup expired entries periodically
+    public void cleanup() {
+        cache.entrySet().removeIf(entry -> entry.getValue().isExpired());
+    }
+    
+    private static class CacheEntry {
+        private final Object value;
+        private final LocalDateTime expiry;
+        
+        public CacheEntry(Object value, LocalDateTime expiry) {
+            this.value = value;
+            this.expiry = expiry;
+        }
+        
+        public Object getValue() {
+            return value;
+        }
+        
+        public boolean isExpired() {
+            return LocalDateTime.now().isAfter(expiry);
+        }
+    }
+}

@@ -5,12 +5,21 @@ from locust.exception import StopUser
 
 
 class VGSUser(HttpUser):
-    wait_time = between(0.5, 2)  # More realistic wait times
+    wait_time = between(0.1, 0.5)  # Faster for stress testing
+    connection_timeout = 10.0
+    network_timeout = 10.0
 
     def on_start(self):
         """Initialize user session"""
-        self.round_id = f"test-round-{random.randint(1000, 9999)}"
+        self.round_id = f"test-round-{random.randint(1000, 99999)}"
         self.transaction_count = 0
+        self.player_id = f"player-{random.randint(1, 10000)}"
+        
+        # Pre-warm connection
+        try:
+            self.client.get("/actuator/health", timeout=5)
+        except Exception:
+            pass  # Ignore pre-warm failures
 
     @task(3)  # Higher weight for transactions
     def post_transaction(self):
