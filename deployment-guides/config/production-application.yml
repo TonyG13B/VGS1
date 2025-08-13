@@ -1,0 +1,82 @@
+
+# Production Configuration for VGS Application
+server:
+  port: 5000
+  address: 0.0.0.0
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 10
+    connection-timeout: 20000
+
+spring:
+  profiles:
+    active: production
+  application:
+    name: vgs-embedded-production
+
+# Optimized for high performance
+couchbase:
+  connection-string: ${COUCHBASE_CONNECTION_STRING}
+  username: ${COUCHBASE_USERNAME}
+  password: ${COUCHBASE_PASSWORD}
+  bucket-name: ${COUCHBASE_BUCKET_NAME:vgs-gaming}
+  pool:
+    min-endpoints: 6
+    max-endpoints: 12
+  timeout:
+    connect: 5s
+    kv: 2s
+    query: 10s
+    analytics: 30s
+  security:
+    trust-certificate: ${CAPELLA_TRUST_CERTIFICATE:true}
+
+management:
+  server:
+    port: 5001
+    address: 0.0.0.0
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Cache configuration
+cache:
+  redis:
+    enabled: false
+  caffeine:
+    enabled: true
+    max-size: 10000
+    expire-after-write: 300s
+
+# Async configuration
+async:
+  core-pool-size: 8
+  max-pool-size: 16
+  queue-capacity: 100
+  thread-name-prefix: VGS-Async-
+
+# Circuit breaker configuration
+circuit-breaker:
+  failure-rate-threshold: 50
+  wait-duration-in-open-state: 30s
+  sliding-window-size: 10
+  minimum-number-of-calls: 5
+
+logging:
+  level:
+    root: INFO
+    com.vgs: DEBUG
+    com.couchbase: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
