@@ -1,4 +1,3 @@
-
 # VGS Application Deployment Guide for AWS/Ubuntu
 
 ## Overview
@@ -109,10 +108,10 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
 
 1. **Create Production Configuration**:
    ```bash
-   sudo nano vgs-application/embedded-document/src/main/resources/application-aws.yml
+   sudo nano vgs-application/embedded-document/src/main/resources/application-prod.yml
    ```
 
-   Add configuration:
+   Update configuration:
    ```yaml
    # AWS Production Configuration
    server:
@@ -121,18 +120,44 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
 
    spring:
      profiles:
-       active: aws
+       active: prod
      application:
-       name: vgs-embedded-aws
+       name: vgs-embedded-production
 
    # Optimized for AWS environment
    couchbase:
+     connection-string: ${COUCHBASE_CONNECTION_STRING}
+     username: ${COUCHBASE_USERNAME}
+     password: ${COUCHBASE_PASSWORD}
+     bucket-name: ${COUCHBASE_BUCKET_NAME}
      pool:
-       min-endpoints: 6
-       max-endpoints: 12
+       min-endpoints: 8
+       max-endpoints: 16
      timeout:
-       connect: 5s
-       kv: 2s
+       connect: 10s
+       kv: 3s
+       query: 30s
+
+   # Threading and async configuration
+   async:
+     pool:
+       core-size: 10
+       max-size: 50
+       queue-capacity: 100
+       thread-name-prefix: "vgs-async-"
+
+   # Circuit breaker configuration
+   circuit-breaker:
+     failure-rate-threshold: 50
+     wait-duration-in-open-state: 30s
+     sliding-window-size: 100
+     minimum-number-of-calls: 10
+
+   # Cache configuration
+   cache:
+     type: caffeine
+     caffeine:
+       spec: maximumSize=10000,expireAfterAccess=5m
 
    management:
      server:
@@ -141,13 +166,22 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
      endpoints:
        web:
          exposure:
-           include: health,info,prometheus
+           include: health,info,prometheus,metrics
          base-path: /actuator
+     endpoint:
+       health:
+         show-details: always
 
    logging:
      level:
        root: INFO
        com.vgs: DEBUG
+       com.couchbase: WARN
+     pattern:
+       console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+       file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+     file:
+       name: /var/log/vgs-application.log
    ```
 
 ## Step 6: Build and Deploy Embedded Document Service
@@ -173,13 +207,10 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
    Type=simple
    User=ubuntu
    WorkingDirectory=/home/ubuntu/VGS-KV/vgs-application/embedded-document
-   ExecStart=/usr/bin/java -Xms2g -Xmx4g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/embedded-document-pattern-1.0.0.jar --spring.profiles.active=aws
+   ExecStart=/usr/bin/java -Xms2g -Xmx4g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/embedded-document-pattern-1.0.0.jar --spring.profiles.active=prod
    Restart=always
    RestartSec=10
    Environment=JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-
-   [Install]
-   WantedBy=multi-user.target
    ```
 
 3. **Start Service**:
@@ -243,7 +274,7 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
    Type=simple
    User=ubuntu
    WorkingDirectory=/home/ubuntu/VGS-KV/vgs-application/transaction-index
-   ExecStart=/usr/bin/java -Xms2g -Xmx4g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/transaction-index-pattern-1.0.0.jar --spring.profiles.active=aws
+   ExecStart=/usr/bin/java -Xms2g -Xmx4g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/transaction-index-pattern-1.0.0.jar --spring.profiles.active=prod
    Restart=always
    RestartSec=10
    Environment=JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64

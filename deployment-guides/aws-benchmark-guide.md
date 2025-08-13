@@ -80,6 +80,7 @@ This guide will help you set up comprehensive benchmark testing for your VGS app
 
 2. **Install Python Dependencies**:
    ```bash
+   cd VGS-KV/benchmark-testing
    pip3 install -r requirements.txt
    ```
 

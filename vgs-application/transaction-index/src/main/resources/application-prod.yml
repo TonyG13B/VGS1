@@ -1,14 +1,14 @@
 
-# AWS Production Configuration
+# AWS Production Configuration for Transaction Index
 server:
-  port: 5000
+  port: 5002
   address: 0.0.0.0
 
 spring:
   profiles:
     active: prod
   application:
-    name: vgs-embedded-production
+    name: vgs-transaction-index-production
 
 # Optimized for AWS environment
 couchbase:
@@ -30,7 +30,7 @@ async:
     core-size: 10
     max-size: 50
     queue-capacity: 100
-    thread-name-prefix: "vgs-async-"
+    thread-name-prefix: "vgs-index-async-"
 
 # Circuit breaker configuration
 circuit-breaker:
@@ -47,7 +47,7 @@ cache:
 
 management:
   server:
-    port: 5001
+    port: 5003
     address: 0.0.0.0
   endpoints:
     web:
@@ -67,4 +67,4 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
-    name: /var/log/vgs-application.log
+    name: /var/log/vgs-transaction-index.log

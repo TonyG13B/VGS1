@@ -106,17 +106,23 @@ This guide will help you set up a comprehensive monitoring system for your VGS a
        static_configs:
          - targets: ['localhost:9090']
 
-     - job_name: 'vgs-application'
+     - job_name: 'vgs-embedded-service'
        static_configs:
          - targets: ['YOUR-VGS-APP-IP:5000']
        metrics_path: '/actuator/prometheus'
        scrape_interval: 5s
 
-     - job_name: 'vgs-application-health'
+     - job_name: 'vgs-embedded-health'
        static_configs:
          - targets: ['YOUR-VGS-APP-IP:5001']
        metrics_path: '/actuator/prometheus'
        scrape_interval: 10s
+
+     - job_name: 'vgs-transaction-index'
+       static_configs:
+         - targets: ['YOUR-VGS-APP-IP:5002']
+       metrics_path: '/actuator/prometheus'
+       scrape_interval: 5s
 
      - job_name: 'node-exporter'
        static_configs:
