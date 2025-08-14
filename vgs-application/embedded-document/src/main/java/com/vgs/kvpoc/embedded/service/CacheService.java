@@ -1,6 +1,7 @@
 package com.vgs.kvpoc.embedded.service;
 
 import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.cluster.Cluster;
 import com.couchbase.client.java.kv.GetResult;
 import com.vgs.kvpoc.embedded.model.GameRound;
 import io.micrometer.core.instrument.Counter;
@@ -24,14 +25,16 @@ import java.util.concurrent.ConcurrentMap;
 public class CacheService {
 
     private final Collection gameRoundsCollection;
+    private final Cluster cluster;
 
     private final io.micrometer.core.instrument.Timer cacheAccessTimer;
     private final Counter cacheHits;
     private final Counter cacheMisses;
 
 
-    public CacheService(Collection gameRoundsCollection, MeterRegistry meterRegistry) {
+    public CacheService(Collection gameRoundsCollection, MeterRegistry meterRegistry, Cluster cluster) {
         this.gameRoundsCollection = gameRoundsCollection;
+        this.cluster = cluster;
         // Initialize the Micrometer cache
         // The Cache class is not directly available, using SimpleCache as an example if needed.
         // However, the current implementation focuses on Counter and Timer metrics.
