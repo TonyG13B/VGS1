@@ -42,13 +42,11 @@ We'll rent a virtual computer from Amazon to run your VGS application. This is l
 
 9. Scroll to "Network settings". Click "Edit". Check the boxes for "Allow SSH traffic from" > "Anywhere-IPv4" (this lets you connect from your home computer). Also check "Allow HTTP traffic from the internet" and "Allow HTTPS traffic from the internet" (for the application to communicate).
 
-10. Still in Network settings, click "Add security group rule" to open more "doors" for the application. For the new rule:
-    - Type: Custom TCP
-    - Port range: 5100 (for VGS application)
-    - Source: Anywhere-IPv4
-    - Description: "VGS Application Port"
-    - Add another for port 8080 (for health checks): Repeat, set port 8080, description "Health Check Port".
-    (Text "screenshot": A table with "Security group rule ID", "Type", "Protocol", "Port range", "Source", "Description". Your new rows will be at the bottom.)
+10. Still in Network settings, click "Add security group rule" to open more "doors" for the application. For the new rules:
+    - Type: Custom TCP, Port range: 5100, Source: Anywhere-IPv4, Description: "VGS Embedded Document Port"
+    - Type: Custom TCP, Port range: 5101, Source: Anywhere-IPv4, Description: "VGS Embedded Management Port"
+    - Type: Custom TCP, Port range: 5300, Source: Anywhere-IPv4, Description: "VGS Transaction Index Port"
+    - Type: Custom TCP, Port range: 5301, Source: Anywhere-IPv4, Description: "VGS Transaction Management Port"
 
 11. Leave "Configure storage" as default (1 x 8 GiB gp3 volume—this is like the server's hard drive space, 8GB is plenty).
 
@@ -78,7 +76,7 @@ Tip: If "command not found", make sure you're in the right folder (use `dir` to 
 ### Step 3: Install Required Software on the Server
 We need to install Java 21, Maven, and other tools. This is like installing apps on your phone.
 
-1. In the SSH terminal, type `sudo apt update` and press Enter (updates the server's software list; "sudo" means "do this as the boss"—it might ask for a password, but the default is none, just press Enter. Takes 1 minute.)
+1. Type `sudo apt update` and press Enter (updates the server's software list; "sudo" means "do this as the boss"—it might ask for a password, but the default is none, just press Enter. Takes 1 minute.)
 
 2. Type `sudo apt install openjdk-21-jdk maven git wget curl -y` and press Enter (installs Java 21, Maven 3.8+, Git, and other tools. The "-y" says "yes to all questions". Takes 3-5 minutes.)
 
@@ -138,7 +136,7 @@ Now we'll compile the Java code and make sure it works before running it.
 
 5. Check both builds succeeded: You should see "BUILD SUCCESS" for both services.
 
-6. Test the connection: Type `cd ../embedded-document && java -jar target/embedded-document-0.0.1-SNAPSHOT.jar --spring.profiles.active=test` and press Enter (runs a quick test to make sure it can connect to Couchbase. You should see Spring Boot startup messages.)
+6. Test the connection: Type `cd ../embedded-document && java -jar target/embedded-document-pattern-1.0.0.jar --spring.profiles.active=test` and press Enter (runs a quick test to make sure it can connect to Couchbase. You should see Spring Boot startup messages.)
 
 7. Stop the test: Press Ctrl+C to stop the test application.
 
@@ -210,8 +208,26 @@ We'll configure the application for optimal performance and reliability.
 11. Copy this content into nano:
    ```bash
    #!/bin/bash
+
+   # Function to close port if in use
+   close_port_if_used() {
+       local port=$1
+       local service_name=$2
+
+       if lsof -ti:$port >/dev/null 2>&1; then
+           echo "Port $port is in use by $service_name. Closing..."
+           lsof -ti:$port | xargs kill -9 2>/dev/null || true
+           sleep 2
+           echo "Port $port freed for $service_name"
+       fi
+   }
+
+   # Clean up ports before starting
+   close_port_if_used 5100 "Embedded Document Service"
+   close_port_if_used 5101 "Embedded Document Management"
+
    cd embedded-document
-   nohup java -Xms2g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -jar target/embedded-document-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod > embedded.log 2>&1 &
+   nohup java -Xms2g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -jar target/embedded-document-pattern-1.0.0.jar --spring.profiles.active=prod > embedded.log 2>&1 &
    echo "Embedded Document service started on port 5100"
    ```
 
@@ -222,9 +238,27 @@ We'll configure the application for optimal performance and reliability.
 14. Copy this content into nano:
    ```bash
    #!/bin/bash
+
+   # Function to close port if in use
+   close_port_if_used() {
+       local port=$1
+       local service_name=$2
+
+       if lsof -ti:$port >/dev/null 2>&1; then
+           echo "Port $port is in use by $service_name. Closing..."
+           lsof -ti:$port | xargs kill -9 2>/dev/null || true
+           sleep 2
+           echo "Port $port freed for $service_name"
+       fi
+   }
+
+   # Clean up ports before starting
+   close_port_if_used 5300 "Transaction Index Service"
+   close_port_if_used 5301 "Transaction Index Management"
+
    cd transaction-index
-   nohup java -Xms2g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -jar target/transaction-index-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod > transaction.log 2>&1 &
-   echo "Transaction Index service started on port 5101"
+   nohup java -Xms2g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -jar target/transaction-index-pattern-1.0.0.jar --spring.profiles.active=prod > transaction.log 2>&1 &
+   echo "Transaction Index service started on port 5300"
    ```
 
 15. Save: Press Ctrl+O, Enter, then Ctrl+X.
@@ -240,11 +274,11 @@ Now we'll start both microservices and make sure they're running properly.
 
 2. Start the Embedded Document service: Type `./start-embedded.sh` and press Enter (starts the first service in the background. You should see "Embedded Document service started on port 5100".)
 
-3. Wait 30 seconds for it to start up, then check if it's running: Type `curl http://localhost:5100/actuator/health` and press Enter (this checks if the service is healthy. You should see JSON response like `{"status":"UP"}`.)
+3. Wait 30 seconds for it to start up, then check if it's running: Type `curl http://0.0.0.0:5101/actuator/health` and press Enter (this checks if the service is healthy. You should see JSON response like `{"status":"UP"}`.)
 
-4. Start the Transaction Index service: Type `./start-transaction.sh` and press Enter (starts the second service in the background. You should see "Transaction Index service started on port 5101".)
+4. Start the Transaction Index service: Type `./start-transaction.sh` and press Enter (starts the second service in the background. You should see "Transaction Index service started on port 5300".)
 
-5. Wait 30 seconds, then check if it's running: Type `curl http://localhost:5101/actuator/health` and press Enter (should see similar health response.)
+5. Wait 30 seconds, then check if it's running: Type `curl http://0.0.0.0:5301/actuator/health` and press Enter (should see similar health response.)
 
 6. Check both services are running: Type `ps aux | grep java` and press Enter (shows running Java processes. You should see two processes with your jar files.)
 
@@ -257,12 +291,130 @@ Tip: If the health check fails with "Connection refused", the service might stil
 ### Step 8: Test the Application Endpoints
 Let's verify the application is working correctly by testing the game transaction endpoints.
 
-1. In the SSH terminal, test the Embedded Document endpoint: Type `curl -X POST http://localhost:5100/game/transaction -H "Content-Type: application/json" -d '{"playerId":"test123","amount":100,"gameId":"game1"}'` and press Enter (this simulates a game transaction. You should see a JSON response with transaction details.)
+1. In the SSH terminal, test the Embedded Document endpoint: Type `curl -X POST http://0.0.0.0:5100/game/transaction -H "Content-Type: application/json" -d '{"playerId":"test123","amount":100,"gameId":"game1"}'` and press Enter (this simulates a game transaction. You should see a JSON response with transaction details.)
 
-2. Test the Transaction Index endpoint: Type `curl -X POST http://localhost:5101/game/transaction -H "Content-Type: application/json" -d '{"playerId":"test456","amount":200,"gameId":"game2"}'` and press Enter (tests the second service. Should see similar response.)
+2. Test the Transaction Index endpoint: Type `curl -X POST http://0.0.0.0:5300/game/transaction -H "Content-Type: application/json" -d '{"playerId":"test456","amount":200,"gameId":"game2"}'` and press Enter (tests the second service. Should see similar response.)
 
-3. Test round data retrieval: Type `curl http://localhost:5100/game/round/test123` and press Enter (retrieves round data for the player. Should show transaction history.)
+3. Test round data retrieval: Type `curl http://0.0.0.0:5100/game/round/test123` and press Enter (retrieves round data for the player. Should show transaction history.)
 
-4. Test the other service: Type `curl http://localhost:5101/game/round/test456` and press Enter (retrieves round data from the second service.)
+4. Test the other service: Type `curl http://0.0.0.0:5300/game/round/test456` and press Enter (retrieves round data from the second service.)
 
-5. Check response times: Type `time curl -X POST htt
+5. Check response times: Type `time curl -X POST http://0.0.0.0:5100/game/transaction -H "Content-Type: application/json" -d '{"playerId":"test123","amount":100,"gameId":"game1"}'` and press Enter (measures how long the transaction takes. Should be very fast.)
+
+### Step 9: Configure Nginx as a Load Balancer/Reverse Proxy
+To make your application accessible via a single IP and manage traffic, we'll set up Nginx.
+
+1. Install Nginx: Type `sudo apt install nginx -y` and press Enter.
+
+2. Configure Nginx: Type `sudo nano /etc/nginx/sites-available/default` and press Enter.
+
+3. Remove existing content and add this configuration:
+   ```nginx
+   upstream vgs_embedded {
+       server 127.0.0.1:5100;
+   }
+
+   upstream vgs_transaction {
+       server 127.0.0.1:5300;
+   }
+
+   server {
+       listen 80;
+       server_name YOUR-PUBLIC-IP; # Replace with your server's actual public IP or a domain name
+
+       location /embedded/ {
+           proxy_pass http://vgs_embedded/;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+       }
+
+       location /transaction/ {
+           proxy_pass http://vgs_transaction/;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+       }
+
+       location /actuator/embedded {
+           proxy_pass http://127.0.0.1:5101/actuator;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+       }
+
+       location /actuator/transaction {
+           proxy_pass http://127.0.0.1:5301/actuator;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+       }
+   }
+   ```
+   (Explanation: This tells Nginx to forward requests to the correct microservice based on the URL path.)
+
+4. Save: Press Ctrl+O, Enter, then Ctrl+X.
+
+5. Test Nginx configuration: Type `sudo nginx -t` and press Enter (checks for errors in the config. Should say "syntax is ok" and "test is successful".)
+
+6. Reload Nginx: Type `sudo systemctl reload nginx` and press Enter (applies the new configuration.)
+
+Tip: If Nginx fails to start, check the logs at `/var/log/nginx/error.log`. If you get a "404 Not Found" error when accessing your app, ensure Nginx is running and the configuration is correct.
+
+### Step 10: Access Your VGS Application
+Now you can access your application using your server's public IP address.
+
+1. Open your web browser.
+
+2. Go to `http://YOUR-PUBLIC-IP/embedded/` (replace YOUR-PUBLIC-IP with your server's actual public IP address). You should see the Embedded Document service documentation or a default page.
+
+3. Go to `http://YOUR-PUBLIC-IP/transaction/` to access the Transaction Index service.
+
+### Step 11: Monitoring and Maintenance
+Keep your application running smoothly with these checks.
+
+1. **Check Application Health**:
+   ```bash
+   curl http://YOUR-PUBLIC-IP:5101/actuator/health  # Embedded Document
+   curl http://YOUR-PUBLIC-IP:5301/actuator/health  # Transaction Index
+   ```
+
+2. **Check Application Metrics**:
+   ```bash
+   curl http://YOUR-PUBLIC-IP:5101/actuator/metrics  # Embedded Document
+   curl http://YOUR-PUBLIC-IP:5301/actuator/metrics  # Transaction Index
+   ```
+
+3. **View Logs**:
+   - Embedded Document service logs: `tail -f /path/to/your/app/embedded.log` (replace with the actual path if different)
+   - Transaction Index service logs: `tail -f /path/to/your/app/transaction.log`
+
+4. **Stop Services**:
+   - To stop the Embedded Document service: `sudo pkill -f "embedded-document-pattern-1.0.0.jar"`
+   - To stop the Transaction Index service: `sudo pkill -f "transaction-index-pattern-1.0.0.jar"`
+
+5. **Turn off the Server (to save costs)**:
+   - Go to the EC2 dashboard in AWS.
+   - Select your "VGS-Application-Server" instance.
+   - Click "Instance state" > "Stop instance".
+   - Remember to "Start instance" when you want to use it again.
+
+### Troubleshooting
+Common problems and how to fix them.
+
+*   **"Connection refused" / "Site can't be reached"**:
+    *   Is the EC2 instance running in AWS?
+    *   Are the security group rules correct (ports 5100, 5101, 5300, 5301 open)?
+    *   Is Nginx running (`sudo systemctl status nginx`)?
+    *   Are the VGS services running (`ps aux | grep java`)? Check their logs.
+    *   Did you replace `YOUR-PUBLIC-IP` with the correct IP?
+
+*   **"Port already in use" error during startup**:
+    *   The `close_port_if_used` function in the startup scripts should handle this. If it persists, manually kill the process using the port: `sudo lsof -i :<port_number>` to find the process ID, then `sudo kill -9 <PID>`.
+
+*   **Build failed**:
+    *   Check for "BUILD FAILURE" messages after running `mvn clean package`.
+    *   Ensure Java and Maven are correctly installed (`java -version`, `mvn -version`).
+    *   Double-check your `application.yml` for correct Couchbase credentials.
+
+*   **Nginx errors**:
+    *   Check Nginx config: `sudo nginx -t`.
+    *   View Nginx error logs: `sudo tail -f /var/log/nginx/error.log`.
+
+If you encounter any other issues, please refer to the VGS GitHub repository for more detailed troubleshooting or to report bugs.
