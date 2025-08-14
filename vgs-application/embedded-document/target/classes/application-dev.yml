@@ -1,0 +1,35 @@
+
+server:
+  port: 5100
+
+spring:
+  application:
+    name: vgs-embedded-document
+  profiles:
+    active: dev
+
+# Development settings - more verbose logging, smaller pools
+couchbase:
+  timeout:
+    connect: 5s
+    key-value: 1s
+  io:
+    min-endpoints: 1
+    max-endpoints: 4
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.vgs: DEBUG
+    com.couchbase: INFO
+    org.springframework: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

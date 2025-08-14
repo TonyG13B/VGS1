@@ -14,26 +14,37 @@ server:
 
 spring:
   application:
-    name: vgs-kvpoc-embedded-document
+    name: vgs-embedded-document
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=10000,expireAfterWrite=5m
   task:
     execution:
       pool:
-        core-size: 8    # 2x vCPUs
-        max-size: 32    # 8x vCPUs
-        queue-capacity: 1000
+        core-size: 8
+        max-size: 16
+        queue-capacity: 100
     scheduling:
       pool:
         size: 4         # 1x vCPUs
   couchbase:
-    connection-string: ${COUCHBASE_CONNECTION_STRING}
-    username: ${COUCHBASE_USERNAME}
-    password: ${COUCHBASE_PASSWORD}
+    connection-string: couchbases://cb.your-cluster.cloud.couchbase.com
+    username: ${COUCHBASE_USERNAME:admin}
+    password: ${COUCHBASE_PASSWORD:password}
     bucket-name: ${COUCHBASE_BUCKET_NAME:vgs-gaming}
-    # Optimized for KV-only operations
-    max-http-connections: 50
-    connect-timeout: 10s
-    kv-timeout: 3s
-    num-kv-endpoints: 4
+    # Optimized connection pooling
+    io:
+      min-endpoints: 2
+      max-endpoints: 8
+      idle-http-connection-timeout: 30s
+    timeout:
+      connect: 10s
+      key-value: 2500ms
+      query: 30s
+    compression:
+      enabled: true
+      min-ratio: 0.83
 
 # Management endpoints
 management:
