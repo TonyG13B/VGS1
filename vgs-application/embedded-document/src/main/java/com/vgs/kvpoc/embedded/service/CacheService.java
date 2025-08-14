@@ -25,18 +25,16 @@ public class CacheService {
 
     private final Collection gameRoundsCollection;
 
-    private final io.micrometer.core.instrument.Cache<String, Object> cache; // Changed to io.micrometer.core.instrument.Cache
+    private final io.micrometer.core.instrument.Timer cacheAccessTimer;
     private final Counter cacheHits;
     private final Counter cacheMisses;
-    private final Timer cacheAccessTimer;
 
 
     public CacheService(Collection gameRoundsCollection, MeterRegistry meterRegistry) {
         this.gameRoundsCollection = gameRoundsCollection;
         // Initialize the Micrometer cache
-        this.cache = io.micrometer.core.instrument.SimpleCache.builder()
-                .maximumSize(1000) // Example: Max 1000 entries
-                .build();
+        // The Cache class is not directly available, using SimpleCache as an example if needed.
+        // However, the current implementation focuses on Counter and Timer metrics.
 
         // Register metrics
         this.cacheHits = Counter.builder("cache.hits")
@@ -53,20 +51,32 @@ public class CacheService {
     @Cacheable(value = "gameRounds", key = "#roundId")
     public GameRound getGameRound(String roundId) {
         try {
-            // Use Micrometer cache
-            GameRound gameRound = (GameRound) cache.get(roundId);
-            if (gameRound != null) {
-                cacheHits.increment();
-                return gameRound;
-            } else {
-                cacheMisses.increment();
-                // Fetch from Couchbase if not in cache
-                GetResult result = gameRoundsCollection.get(roundId);
-                gameRound = result.contentAs(GameRound.class);
-                // Put into Micrometer cache with a TTL
-                cache.put(roundId, gameRound, Duration.ofMinutes(5)); // Example TTL
-                return gameRound;
-            }
+            // The previous line with `cache.get(roundId)` is removed as `io.micrometer.core.instrument.Cache` is not used.
+            // This method now relies on Spring's @Cacheable and custom cache logic.
+
+            // Fetch from Couchbase if not in cache (handled by Spring Cache or custom cache)
+            // If Spring Cache misses, this logic will be executed.
+            // The following lines are meant to simulate cache interaction for metrics.
+
+            // Placeholder for cache interaction logic that would increment metrics
+            // In a real scenario, if using a cache library, you'd get from there first.
+            // For this example, we directly fetch and assume a cache miss if not found via Spring Cache.
+
+            // Fetch from Couchbase
+            GetResult result = gameRoundsCollection.get(roundId);
+            GameRound gameRound = result.contentAs(GameRound.class);
+
+            // Simulate cache put and increment hits if it were a hit
+            // For demonstration, we'll just increment misses here if we were to assume a miss.
+            // If Spring Cache handles the hit, this method won't even be called.
+            // Thus, any execution here implies a cache miss.
+            cacheMisses.increment(); // Increment miss count as Spring Cache missed this entry.
+
+            // Note: The original code had a `cache.put(roundId, gameRound, Duration.ofMinutes(5));`
+            // This is now implicitly handled by Spring Cache's configuration.
+            // If a custom cache was to be used alongside Spring Cache, that logic would be here.
+
+            return gameRound;
         } catch (Exception e) {
             log.debug("Round not found or error accessing cache/DB: {}", roundId, e);
             return null;
