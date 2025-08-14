@@ -101,6 +101,49 @@ class VGSUser(HttpUser):
                 exception=e,
             )
 
+    # Added methods to test specific services
+    def test_embedded_document(self, host):
+        """Test the Embedded Document service"""
+        try:
+            with self.client.get(f"{host}/health", catch_response=True) as response:
+                if response.status_code == 200:
+                    response.success()
+                else:
+                    response.failure(f"Embedded Document health check failed: HTTP {response.status_code}")
+        except Exception as e:
+            self.environment.events.request_failure.fire(
+                request_type="GET",
+                name=f"{host}/health",
+                response_time=0,
+                exception=e,
+            )
+
+    def test_transaction_index(self, host):
+        """Test the Transaction Index service"""
+        try:
+            with self.client.get(f"{host}/health", catch_response=True) as response:
+                if response.status_code == 200:
+                    response.success()
+                else:
+                    response.failure(f"Transaction Index health check failed: HTTP {response.status_code}")
+        except Exception as e:
+            self.environment.events.request_failure.fire(
+                request_type="GET",
+                name=f"{host}/health",
+                response_time=0,
+                exception=e,
+            )
+
+    # Method to simulate load on both services
+    def simulate_service_load(self):
+        # Test both services alternately for better load distribution
+        if random.choice([True, False]):
+            # Test Embedded Document service
+            self.test_embedded_document("http://0.0.0.0:5100")
+        else:
+            # Test Transaction Index service
+            self.test_transaction_index("http://0.0.0.0:5300")
+
 
 # Custom event handlers for better monitoring
 @events.request.add_listener
@@ -119,6 +162,6 @@ def my_request_handler(
     if exception:
         logging.error(f"Request failed: {name} - {exception}")
     elif response and response.status_code >= 400:
-        logging.warning(f"Request error: {name} - HTTP {response.status_code}")
+        logging.warning(f"Request error: {name} - {response.status_code}")
 
 # Run with: locust --host=http://<vgs-ip>:5100 --users=500 --run-time=5m --headless --csv=locust_results

@@ -1,7 +1,7 @@
 
 # AWS Production Configuration for Transaction Index
 server:
-  port: 5002
+  port: 5300
   address: 0.0.0.0
 
 spring:
@@ -47,7 +47,7 @@ cache:
 
 management:
   server:
-    port: 5003
+    port: 5301
     address: 0.0.0.0
   endpoints:
     web:

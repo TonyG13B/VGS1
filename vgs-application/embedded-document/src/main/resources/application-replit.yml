@@ -1,7 +1,7 @@
 
 # Replit Production Configuration
 server:
-  port: 5000
+  port: 5100
   address: 0.0.0.0
 
 spring:
@@ -21,7 +21,7 @@ couchbase:
 
 management:
   server:
-    port: 5001
+    port: 5101
     address: 0.0.0.0
   endpoints:
     web:
