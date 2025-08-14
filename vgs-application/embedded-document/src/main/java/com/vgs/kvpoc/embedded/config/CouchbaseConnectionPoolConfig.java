@@ -2,8 +2,8 @@
 package com.vgs.kvpoc.embedded.config;
 
 import com.couchbase.client.java.env.ClusterEnvironment;
-import com.couchbase.client.java.env.TimeoutConfig;
-import com.couchbase.client.java.env.IoConfig;
+import com.couchbase.client.core.env.TimeoutConfig;
+import com.couchbase.client.core.env.IoConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
