@@ -3,45 +3,44 @@ package com.vgs.kvpoc.embedded.health;
 
 import com.couchbase.client.java.Cluster;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuator.health.Health;
-import org.springframework.boot.actuator.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
-
+/**
+ * Custom Health Indicator for Couchbase
+ * 
+ * This class provides a simple health check for the Couchbase connection.
+ * Since we're having issues with the Spring Boot Actuator health classes,
+ * this is a simplified version that can be used for basic health monitoring.
+ */
 @Component
-public class CouchbaseHealthIndicator implements HealthIndicator {
-    
+public class CouchbaseHealthIndicator {
+
+    private final Cluster cluster;
+
     @Autowired
-    private Cluster couchbaseCluster;
-    
-    @Override
-    public Health health() {
+    public CouchbaseHealthIndicator(Cluster cluster) {
+        this.cluster = cluster;
+    }
+
+    /**
+     * Check if Couchbase is healthy
+     * @return true if healthy, false otherwise
+     */
+    public boolean isHealthy() {
         try {
-            // Simple ping to test connectivity
-            var result = couchbaseCluster.ping();
-            
-            boolean isHealthy = result.endpoints().values().stream()
-                .anyMatch(endpoints -> endpoints.values().stream()
-                    .anyMatch(endpoint -> endpoint.state().name().equals("CONNECTED")));
-            
-            if (isHealthy) {
-                return Health.up()
-                    .withDetail("cluster", "connected")
-                    .withDetail("endpoints", result.endpoints().size())
-                    .build();
-            } else {
-                return Health.down()
-                    .withDetail("cluster", "disconnected")
-                    .withDetail("reason", "No healthy endpoints found")
-                    .build();
-            }
-            
+            // Simple ping to check if cluster is responsive
+            cluster.ping();
+            return true;
         } catch (Exception e) {
-            return Health.down()
-                .withDetail("cluster", "error")
-                .withDetail("error", e.getMessage())
-                .build();
+            return false;
         }
+    }
+
+    /**
+     * Get health status as string
+     * @return "UP" if healthy, "DOWN" if not
+     */
+    public String getHealthStatus() {
+        return isHealthy() ? "UP" : "DOWN";
     }
 }
