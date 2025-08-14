@@ -33,8 +33,10 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
      - SSH (22): Your IP only
      - HTTP (80): 0.0.0.0/0
      - HTTPS (443): 0.0.0.0/0
-     - Custom TCP (5000): 0.0.0.0/0
-     - Custom TCP (5001): 0.0.0.0/0
+     - Custom TCP (5100): 0.0.0.0/0 (Embedded Document Service)
+     - Custom TCP (5101): 0.0.0.0/0 (Embedded Document Management)
+     - Custom TCP (5300): 0.0.0.0/0 (Transaction Index Service)
+     - Custom TCP (5301): 0.0.0.0/0 (Transaction Index Management)
 
 3. **Launch Instance**:
    - Review settings and click "Launch"
@@ -115,7 +117,7 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
    ```yaml
    # AWS Production Configuration
    server:
-     port: 5000
+     port: 5100
      address: 0.0.0.0
 
    spring:
@@ -161,7 +163,7 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
 
    management:
      server:
-       port: 5001
+       port: 5101
        address: 0.0.0.0
      endpoints:
        web:
@@ -184,64 +186,82 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
        name: /var/log/vgs-application.log
    ```
 
-## Step 6: Build and Deploy Embedded Document Service
+## Step 6: Build and Deploy Services Using Startup Scripts
 
-1. **Build Application**:
+1. **Build Both Applications**:
    ```bash
    cd vgs-application/embedded-document
    mvn clean package -DskipTests
+   cd ../transaction-index
+   mvn clean package -DskipTests
    ```
 
-2. **Create Service Script**:
+2. **Make Scripts Executable**:
    ```bash
-   sudo nano /etc/systemd/system/vgs-embedded.service
+   cd ../scripts
+   chmod +x *.sh
    ```
 
-   Add service configuration:
-   ```ini
-   [Unit]
-   Description=VGS Embedded Document Service
-   After=network.target
-
-   [Service]
-   Type=simple
-   User=ubuntu
-   WorkingDirectory=/home/ubuntu/VGS-KV/vgs-application/embedded-document
-   ExecStart=/usr/bin/java -Xms2g -Xmx4g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/embedded-document-pattern-1.0.0.jar --spring.profiles.active=prod
-   Restart=always
-   RestartSec=10
-   Environment=JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-   ```
-
-3. **Start Service**:
+3. **Start Embedded Document Service**:
    ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable vgs-embedded.service
-   sudo systemctl start vgs-embedded.service
+   ./start-embedded.sh
    ```
+   
+   This script will:
+   - Check and close port 5100 if in use
+   - Start the Embedded Document service on port 5100
+   - Display startup logs
 
-4. **Check Service Status**:
+4. **Start Transaction Index Service** (in a new terminal):
    ```bash
-   sudo systemctl status vgs-embedded.service
-   sudo journalctl -u vgs-embedded.service -f
+   ./start-transaction.sh
+   ```
+   
+   This script will:
+   - Check and close port 5300 if in use
+   - Start the Transaction Index service on port 5300
+   - Display startup logs
+
+5. **Alternative: Start All Services at Once**:
+   ```bash
+   ./start-all.sh
+   ```
+   
+   This will start both services in the background.
+
+6. **Check Service Status**:
+   ```bash
+   ps aux | grep java
+   # You should see both services running on ports 5100 and 5300
    ```
 
 ## Step 7: Verify Deployment
 
-1. **Test Health Endpoint**:
+1. **Test Embedded Document Service Health**:
    ```bash
-   curl http://localhost:5000/actuator/health
+   curl http://localhost:5100/actuator/health
    ```
    Should return: `{"status":"UP"}`
 
-2. **Test from External**:
+2. **Test Transaction Index Service Health**:
    ```bash
-   curl http://YOUR-PUBLIC-IP:5000/actuator/health
+   curl http://localhost:5300/actuator/health
+   ```
+   Should return: `{"status":"UP"}`
+
+3. **Test from External (Embedded Document)**:
+   ```bash
+   curl http://YOUR-PUBLIC-IP:5100/actuator/health
    ```
 
-3. **Test API Endpoint**:
+4. **Test from External (Transaction Index)**:
    ```bash
-   curl -X POST http://YOUR-PUBLIC-IP:5000/api/v1/transactions \
+   curl http://YOUR-PUBLIC-IP:5300/actuator/health
+   ```
+
+5. **Test API Endpoint (Embedded Document)**:
+   ```bash
+   curl -X POST http://YOUR-PUBLIC-IP:5100/api/v1/transactions \
    -H "Content-Type: application/json" \
    -d '{
      "playerId": "player123",
@@ -251,44 +271,30 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
    }'
    ```
 
-## Step 8: Deploy Transaction Index Service (Optional)
+## Step 8: Monitor Services
 
-1. **Build Transaction Index Service**:
+1. **Check Running Services**:
    ```bash
-   cd ../transaction-index
-   mvn clean package -DskipTests
+   cd vgs-application/scripts
+   ./health-check.sh
+   ```
+   
+   This will show the status of both services and their health endpoints.
+
+2. **View Service Logs**:
+   ```bash
+   # View embedded document logs
+   tail -f /tmp/vgs-embedded.log
+   
+   # View transaction index logs  
+   tail -f /tmp/vgs-transaction.log
    ```
 
-2. **Create Service Script**:
+3. **Stop Services When Needed**:
    ```bash
-   sudo nano /etc/systemd/system/vgs-transaction-index.service
-   ```
-
-   Service configuration:
-   ```ini
-   [Unit]
-   Description=VGS Transaction Index Service
-   After=network.target
-
-   [Service]
-   Type=simple
-   User=ubuntu
-   WorkingDirectory=/home/ubuntu/VGS-KV/vgs-application/transaction-index
-   ExecStart=/usr/bin/java -Xms2g -Xmx4g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/transaction-index-pattern-1.0.0.jar --spring.profiles.active=prod
-   Restart=always
-   RestartSec=10
-   Environment=JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-
-   [Install]
-   WantedBy=multi-user.target
-   ```
-
-3. **Start Service on Different Port**:
-   Update application configuration to use port 5001, then:
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable vgs-transaction-index.service
-   sudo systemctl start vgs-transaction-index.service
+   # Find and stop processes
+   pkill -f "embedded-document-pattern"
+   pkill -f "transaction-index-pattern"
    ```
 
 ## Step 9: Setup Load Balancer (Optional)
@@ -305,23 +311,32 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
 
    Add configuration:
    ```nginx
-   upstream vgs_backend {
-       server 127.0.0.1:5000;
-       server 127.0.0.1:5001;
+   upstream vgs_embedded {
+       server 127.0.0.1:5100;
+   }
+
+   upstream vgs_transaction {
+       server 127.0.0.1:5300;
    }
 
    server {
        listen 80;
        server_name YOUR-PUBLIC-IP;
 
-       location / {
-           proxy_pass http://vgs_backend;
+       location /embedded/ {
+           proxy_pass http://vgs_embedded/;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+       }
+
+       location /transaction/ {
+           proxy_pass http://vgs_transaction/;
            proxy_set_header Host $host;
            proxy_set_header X-Real-IP $remote_addr;
        }
 
        location /actuator {
-           proxy_pass http://127.0.0.1:5000;
+           proxy_pass http://vgs_embedded;
            proxy_set_header Host $host;
            proxy_set_header X-Real-IP $remote_addr;
        }
@@ -351,7 +366,11 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
 
 1. **Check Application Metrics**:
    ```bash
-   curl http://YOUR-PUBLIC-IP:5000/actuator/metrics
+   # Embedded Document metrics
+   curl http://YOUR-PUBLIC-IP:5100/actuator/metrics
+   
+   # Transaction Index metrics
+   curl http://YOUR-PUBLIC-IP:5300/actuator/metrics
    ```
 
 2. **Monitor System Resources**:
@@ -363,7 +382,17 @@ This guide will help you deploy the VGS (Video Game System) application on AWS U
 
 3. **Check Service Logs**:
    ```bash
-   sudo journalctl -u vgs-embedded.service --since "1 hour ago"
+   # Embedded Document logs
+   tail -f /tmp/vgs-embedded.log
+   
+   # Transaction Index logs
+   tail -f /tmp/vgs-transaction.log
+   ```
+
+4. **Use Health Check Script**:
+   ```bash
+   cd vgs-application/scripts
+   ./health-check.sh
    ```
 
 ## Step 12: Performance Optimization
