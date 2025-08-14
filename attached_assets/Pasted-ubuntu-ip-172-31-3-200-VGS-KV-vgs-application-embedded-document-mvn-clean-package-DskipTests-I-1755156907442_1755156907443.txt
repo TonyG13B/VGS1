@@ -1,0 +1,114 @@
+ubuntu@ip-172-31-3-200:~/VGS-KV/vgs-application/embedded-document$ mvn clean package -DskipTests
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------< com.vgs.kvpoc:embedded-document-pattern >---------------
+[INFO] Building VGS KV POC - Embedded Document Pattern 1.0.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ embedded-document-pattern ---
+[INFO] Deleting /home/ubuntu/VGS-KV/vgs-application/embedded-document/target
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.8.8:prepare-agent (default) @ embedded-document-pattern ---
+[INFO] argLine set to -javaagent:/home/ubuntu/.m2/repository/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar=destfile=/home/ubuntu/VGS-KV/vgs-application/embedded-document/target/jacoco.exec
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:3.2.5:build-info (default) @ embedded-document-pattern ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ embedded-document-pattern ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 4 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ embedded-document-pattern ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 23 source files with javac [debug target 21] to target/classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/service/CacheService.java:[28,48] cannot find symbol
+  symbol:   class Cache
+  location: package io.micrometer.core.instrument
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.java:[6,48] package org.springframework.boot.actuator.health does not exist
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.java:[7,48] package org.springframework.boot.actuator.health does not exist
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.java:[13,50] cannot find symbol
+  symbol: class HealthIndicator
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.java:[19,12] cannot find symbol
+  symbol:   class Health
+  location: class com.vgs.kvpoc.embedded.health.CouchbaseHealthIndicator
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/config/CouchbaseConnectionPoolConfig.java:[5,37] cannot find symbol
+  symbol:   class TimeoutConfig
+  location: package com.couchbase.client.java.env
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/config/CouchbaseConnectionPoolConfig.java:[6,37] cannot find symbol
+  symbol:   class IoConfig
+  location: package com.couchbase.client.java.env
+[INFO] 7 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.819 s
+[INFO] Finished at: 2025-08-14T07:33:28Z
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project embedded-document-pattern: Compilation failure: Compilation failure: 
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/service/CacheService.java:[28,48] cannot find symbol
+[ERROR]   symbol:   class Cache
+[ERROR]   location: package io.micrometer.core.instrument
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.java:[6,48] package org.springframework.boot.actuator.health does not exist
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.java:[7,48] package org.springframework.boot.actuator.health does not exist
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.java:[13,50] cannot find symbol
+[ERROR]   symbol: class HealthIndicator
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.java:[19,12] cannot find symbol
+[ERROR]   symbol:   class Health
+[ERROR]   location: class com.vgs.kvpoc.embedded.health.CouchbaseHealthIndicator
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/config/CouchbaseConnectionPoolConfig.java:[5,37] cannot find symbol
+[ERROR]   symbol:   class TimeoutConfig
+[ERROR]   location: package com.couchbase.client.java.env
+[ERROR] /home/ubuntu/VGS-KV/vgs-application/embedded-document/src/main/java/com/vgs/kvpoc/embedded/config/CouchbaseConnectionPoolConfig.java:[6,37] cannot find symbol
+[ERROR]   symbol:   class IoConfig
+[ERROR]   location: package com.couchbase.client.java.env
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+ubuntu@ip-172-31-3-200:~/VGS-KV/vgs-application/embedded-document$ cd ../transaction-index
+ubuntu@ip-172-31-3-200:~/VGS-KV/vgs-application/transaction-index$ mvn clean package -DskipTests
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------< com.vgs.kvpoc:transaction-index-pattern >---------------
+[INFO] Building VGS KV POC - Transaction Index Pattern 1.0.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.2.0:clean (default-clean) @ transaction-index-pattern ---
+[INFO] Deleting /home/ubuntu/VGS-KV/vgs-application/transaction-index/target
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ transaction-index-pattern ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ transaction-index-pattern ---
+[INFO] Invalid value for maxmem '2g'. Ignoring this option.
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 19 source files with javac [forked debug release 21] to target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ transaction-index-pattern ---
+[INFO] skip non existing resourceDirectory /home/ubuntu/VGS-KV/vgs-application/transaction-index/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ transaction-index-pattern ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.1.2:test (default-test) @ transaction-index-pattern ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.3.0:jar (default-jar) @ transaction-index-pattern ---
+[INFO] Building jar: /home/ubuntu/VGS-KV/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:3.2.5:repackage (repackage) @ transaction-index-pattern ---
+[INFO] Replacing main artifact /home/ubuntu/VGS-KV/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /home/ubuntu/VGS-KV/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar.original
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.903 s
+[INFO] Finished at: 2025-08-14T07:33:50Z
+[INFO] ------------------------------------------------------------------------
