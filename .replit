@@ -17,15 +17,15 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd vgs-application/embedded-document"
+args = "cd vgs-application/scripts"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "mvn clean package -DskipTests"
+args = "chmod +x *.sh"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "java -Xms1g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/embedded-document-pattern-1.0.0.jar --spring.profiles.active=replit"
+args = "./start-embedded.sh"
 
 [[workflows.workflow]]
 name = "Start Transaction Index Service"
@@ -34,15 +34,15 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd vgs-application/transaction-index"
+args = "cd vgs-application/scripts"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "mvn clean package -DskipTests"
+args = "chmod +x *.sh"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "java -Xms1g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -jar target/transaction-index-pattern-1.0.0.jar --spring.profiles.active=replit"
+args = "./start-transaction.sh"
 
 [[workflows.workflow]]
 name = "Run Load Tests"
@@ -60,3 +60,20 @@ args = "pip install -r requirements.txt"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "locust -f locustfile.py --host=http://0.0.0.0:5000 --users=100 --spawn-rate=10 --run-time=2m --headless"
+
+[[workflows.workflow]]
+name = "Start All VGS Services"
+author = 44525175
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd vgs-application/scripts"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "chmod +x *.sh"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./start-all.sh"
