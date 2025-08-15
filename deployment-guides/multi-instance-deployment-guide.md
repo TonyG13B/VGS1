@@ -259,14 +259,15 @@ drwxr-xr-x  XX user user  XXXX date vgs-application
 nano ~/VGS1/.env
 ```
 
-**Add the following content (replace with your actual Couchbase details):**
+**Add the following content with your specific Couchbase details:**
 
 ```bash
 # Couchbase Configuration
-COUCHBASE_CONNECTION_STRING=couchbases://your-cluster.cloud.couchbase.com
-COUCHBASE_USERNAME=your-username
-COUCHBASE_PASSWORD=your-password
-COUCHBASE_BUCKET_NAME=vgs-gaming
+COUCHBASE_CONNECTION_STRING=couchbases://cb.dwmbjb1o-vduuwae.cloud.couchbase.com
+COUCHBASE_USERNAME=vgs
+COUCHBASE_PASSWORD=Password1234$
+COUCHBASE_EMBEDDED_BUCKET_NAME=embedded_document
+COUCHBASE_TRANSACTION_BUCKET_NAME=transaction_index
 
 # Application Configuration
 VGS_EMBEDDED_IP=13.115.27.45
@@ -280,12 +281,104 @@ VGS_TRANSACTION_PORT=5300
 VGS_BENCHMARK_PORT=8089
 PROMETHEUS_PORT=9090
 GRAFANA_PORT=3000
+
+# Couchbase Collections
+COUCHBASE_SCOPE=_default
+COUCHBASE_GAME_ROUNDS_COLLECTION=game_rounds
+COUCHBASE_GAME_TRANSACTIONS_COLLECTION=game_transactions
 ```
 
 **Save the file:**
 - Press `Ctrl + X`
 - Press `Y` to confirm
 - Press `Enter` to save
+
+#### Step 5.3: Set Up Couchbase Configuration (Automated)
+
+**🚀 Quick Setup Option (Recommended):**
+
+**On ALL 4 instances, run the automated configuration script:**
+
+```bash
+# Download and run the configuration script
+cd ~/VGS1
+chmod +x setup-couchbase-config.sh
+./setup-couchbase-config.sh
+```
+
+**This script will automatically:**
+- ✅ Create the Couchbase certificate file
+- ✅ Set up environment variables with your specific details
+- ✅ Configure application properties for both services
+- ✅ Update monitoring configuration with instance IPs
+
+**Expected Output:**
+```
+🔧 VGS Couchbase Configuration Setup
+====================================
+📋 Setting up Couchbase certificate...
+✅ Couchbase certificate created successfully
+📝 Creating environment configuration...
+✅ Environment configuration created successfully
+⚙️ Creating application configurations...
+✅ Application configurations created successfully
+📊 Creating monitoring configuration...
+✅ Monitoring configuration created successfully
+
+🎉 Couchbase Configuration Setup Complete!
+==========================================
+✅ What was configured:
+   • Couchbase certificate installed at /etc/couchbase/certs/couchbase-cert.pem
+   • Environment variables set in ~/VGS1/.env
+   • Application configurations created for both services
+   • Monitoring configuration updated with instance IPs
+```
+
+#### Step 5.4: Manual Couchbase Certificate Setup (Alternative)
+
+**If you prefer manual setup, on ALL 4 instances:**
+
+```bash
+# Create certificate directory
+sudo mkdir -p /etc/couchbase/certs
+
+# Create certificate file
+sudo nano /etc/couchbase/certs/couchbase-cert.pem
+```
+
+**Add the following certificate content:**
+
+```
+-----BEGIN CERTIFICATE-----
+MIIDFTCCAf2gAwIBAgIRANLVkgOvtaXiQJi0V6qeNtswDQYJKoZIhvcNAQELBQAw
+JDESMBAGA1UECgwJQ291Y2hiYXNlMQ4wDAYDVQQLDAVDbG91ZDAeFw0xOTEyMDYy
+MjEyNTlaFw0yOTEyMDYyMzEyNTlaMCQxEjAQBgNVBAoMCUNvdWNoYmFzZTEOMAwG
+A1UECwwFQ2xvdWQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCfvOIi
+enG4Dp+hJu9asdxEMRmH70hDyMXv5ZjBhbo39a42QwR59y/rC/sahLLQuNwqif85
+Fod1DkqgO6Ng3vecSAwyYVkj5NKdycQu5tzsZkghlpSDAyI0xlIPSQjoORA/pCOU
+WOpymA9dOjC1bo6rDyw0yWP2nFAI/KA4Z806XeqLREuB7292UnSsgFs4/5lqeil6
+rL3ooAw/i0uxr/TQSaxi1l8t4iMt4/gU+W52+8Yol0JbXBTFX6itg62ppb/Eugmn
+mQRMgL67ccZs7cJ9/A0wlXencX2ohZQOR3mtknfol3FH4+glQFn27Q4xBCzVkY9j
+KQ20T1LgmGSngBInAgMBAAGjQjBAMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYE
+FJQOBPvrkU2In1Sjoxt97Xy8+cKNMA4GA1UdDwEB/wQEAwIBhjANBgkqhkiG9w0B
+AQsFAAOCAQEARgM6XwcXPLSpFdSf0w8PtpNGehmdWijPM3wHb7WZiS47iNen3oq8
+m2mm6V3Z57wbboPpfI+VEzbhiDcFfVnK1CXMC0tkF3fnOG1BDDvwt4jU95vBiNjY
+xdzlTP/Z+qr0cnVbGBSZ+fbXstSiRaaAVcqQyv3BRvBadKBkCyPwo+7svQnScQ5P
+Js7HEHKVms5tZTgKIw1fbmgR2XHleah1AcANB+MAPBCcTgqurqr5G7W2aPSBLLGA
+fRIiVzm7VFLc7kWbp7ENH39HVG6TZzKnfl9zJYeiklo5vQQhGSMhzBsO70z4RRzi
+DPFAN/4qZAgD5q3AFNIq2WWADFQGSwVJhg==
+-----END CERTIFICATE-----
+```
+
+**Save the certificate file:**
+- Press `Ctrl + X`
+- Press `Y` to confirm
+- Press `Enter` to save
+
+**Set proper permissions:**
+```bash
+sudo chmod 644 /etc/couchbase/certs/couchbase-cert.pem
+```
 
 ---
 
@@ -388,7 +481,7 @@ spring:
     connection-string: ${COUCHBASE_CONNECTION_STRING}
     username: ${COUCHBASE_USERNAME}
     password: ${COUCHBASE_PASSWORD}
-    bucket-name: ${COUCHBASE_BUCKET_NAME}
+    bucket-name: ${COUCHBASE_EMBEDDED_BUCKET_NAME}
     io:
       min-endpoints: 4
       max-endpoints: 16
@@ -416,7 +509,7 @@ spring:
     connection-string: ${COUCHBASE_CONNECTION_STRING}
     username: ${COUCHBASE_USERNAME}
     password: ${COUCHBASE_PASSWORD}
-    bucket-name: ${COUCHBASE_BUCKET_NAME}
+    bucket-name: ${COUCHBASE_TRANSACTION_BUCKET_NAME}
     io:
       min-endpoints: 4
       max-endpoints: 16
@@ -614,7 +707,34 @@ curl http://13.115.170.132:9090/api/v1/status/config
 3. **Prometheus**: http://13.115.170.132:9090
 4. **Grafana**: http://13.115.170.132:3000 (admin/admin)
 
-#### Step 11.2: Run a Quick Test
+#### Step 11.2: Test Couchbase Connection
+
+**On both application instances, test the Couchbase connection:**
+
+**On vgs-embedded-document (13.115.27.45):**
+```bash
+# Test Couchbase connection
+curl -X GET "http://localhost:5100/actuator/health" | jq '.components.couchbase'
+```
+
+**On vgs-transaction-index (57.180.14.130):**
+```bash
+# Test Couchbase connection
+curl -X GET "http://localhost:5300/actuator/health" | jq '.components.couchbase'
+```
+
+**Expected Output:**
+```json
+{
+  "status": "UP",
+  "details": {
+    "cluster": "UP",
+    "bucket": "UP"
+  }
+}
+```
+
+#### Step 11.3: Run a Quick Test
 
 **On vgs-benchmark-testing (13.231.68.228):**
 
