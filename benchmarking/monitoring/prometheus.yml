@@ -1,9 +1,0 @@
-<content><![CDATA[
-scrape_configs:
-  - job_name: 'vgs'
-    static_configs:
-      - targets: ['vgs-instance-ip:8080/metrics']
-  - job_name: 'benchmarking'
-    static_configs:
-      - targets: ['localhost:8080/metrics'] # Adjust
-]]></content>
