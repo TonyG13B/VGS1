@@ -1,7 +1,7 @@
 package com.vgs.kvpoc.embedded.service;
 
 import com.couchbase.client.java.Collection;
-import com.couchbase.client.java.cluster.Cluster;
+import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.kv.GetResult;
 import com.vgs.kvpoc.embedded.model.GameRound;
 import io.micrometer.core.instrument.Counter;

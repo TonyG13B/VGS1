@@ -5,8 +5,8 @@ server:
 spring:
   application:
     name: vgs-embedded-document
-  profiles:
-    active: dev
+  main:
+    allow-bean-definition-overriding: true
 
 # Development settings - more verbose logging, smaller pools
 couchbase:

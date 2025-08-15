@@ -1,0 +1,35 @@
+nohup: ignoring input
+🎮 Starting VGS KV POC - Transaction Index Pattern
+📊 Pattern: GameRound with separate TransactionIndex for fast lookups
+🚀 Port: 5300
+📈 Optimized for: High-volume systems, audit trails, and compliance
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.5)
+
+13:06:23.386 [main] INFO  c.v.k.i.TransactionIndexApplication - Starting TransactionIndexApplication v1.0.0 using Java 21.0.8 with PID 72776 (/home/tony/VGS-KV/VGS-KV/vgs-application/transaction-index/target/transaction-index-pattern-1.0.0.jar started by tony in /home/tony/VGS-KV/VGS-KV/vgs-application/transaction-index)
+13:06:23.388 [main] INFO  c.v.k.i.TransactionIndexApplication - The following 1 profile is active: "test"
+13:06:25.101 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'indexBenchmarkService': Unsatisfied dependency expressed through field 'gameService': Error creating bean with name 'indexGameService': Unsatisfied dependency expressed through field 'gameRoundsCollection': No qualifying bean of type 'com.couchbase.client.java.Collection' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true), @org.springframework.beans.factory.annotation.Qualifier("gameRoundsCollection")}
+13:06:25.143 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field gameRoundsCollection in com.vgs.kvpoc.index.service.IndexGameService required a bean of type 'com.couchbase.client.java.Collection' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'com.couchbase.client.java.Collection' in your configuration.
+

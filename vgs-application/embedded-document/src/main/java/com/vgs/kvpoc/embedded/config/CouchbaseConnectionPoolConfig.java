@@ -7,10 +7,12 @@ import com.couchbase.client.core.env.IoConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.time.Duration;
 
 @Configuration
+@ConditionalOnProperty(name = "couchbase.enabled", havingValue = "true", matchIfMissing = true)
 public class CouchbaseConnectionPoolConfig {
 
     @Value("${couchbase.pool.min-endpoints:4}")
@@ -28,16 +30,14 @@ public class CouchbaseConnectionPoolConfig {
     @Bean
     public ClusterEnvironment couchbaseClusterEnvironment() {
         return ClusterEnvironment.builder()
-            .timeoutConfig(TimeoutConfig.builder()
+            .timeoutConfig(timeoutConfig -> timeoutConfig
                 .connectTimeout(connectTimeout)
                 .kvTimeout(kvTimeout)
-                .queryTimeout(Duration.ofSeconds(30))
-                .build())
-            .ioConfig(IoConfig.builder()
+                .queryTimeout(Duration.ofSeconds(30)))
+            .ioConfig(ioConfig -> ioConfig
                 .numKvConnections(minEndpoints)
                 .maxHttpConnections(maxEndpoints)
-                .idleHttpConnectionTimeout(Duration.ofSeconds(30))
-                .build())
+                .idleHttpConnectionTimeout(Duration.ofSeconds(30)))
             .build();
     }
 }

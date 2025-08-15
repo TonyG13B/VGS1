@@ -4,6 +4,7 @@ import com.vgs.kvpoc.embedded.cache.CouchbaseNativeCacheManager;
 import com.vgs.kvpoc.embedded.service.CouchbaseConnectionManager;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.Primary;
  */
 @Configuration
 @EnableCaching
+@ConditionalOnProperty(name = "couchbase.enabled", havingValue = "true", matchIfMissing = true)
 public class CacheConfig {
 
     @Autowired

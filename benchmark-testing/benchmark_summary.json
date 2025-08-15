@@ -1,14 +1,1 @@
-{
-  "app_url": "http://localhost",
-  "users": 10,
-  "duration": "30s",
-  "rps": 200.0,
-  "success_rate": 0.99,
-  "error_rate": 0.01,
-  "latency_p50_ms": 8.0,
-  "latency_p95_ms": 18.0,
-  "latency_p99_ms": 30.0,
-  "write_success_pct": 99.0,
-  "round_retrieval_p95_ms": 18.0,
-  "http_request_p95_ms": 18.0
-}
+{"app_url": "http://localhost:5300", "users": 100, "duration": "300s", "rps": 0.0, "success_rate": 0.0, "error_rate": 1.0, "latency_p50_ms": 0.4703998565673828, "latency_p95_ms": 0.6005764007568359, "latency_p99_ms": 0.7340908050537109, "write_success_pct": 0.0, "round_retrieval_p95_ms": 0, "http_request_p95_ms": 0.6005764007568359}

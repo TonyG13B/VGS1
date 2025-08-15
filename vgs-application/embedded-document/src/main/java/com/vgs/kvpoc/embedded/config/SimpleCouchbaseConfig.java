@@ -11,6 +11,7 @@ import com.couchbase.client.core.env.CompressionConfig;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -61,6 +62,7 @@ import java.time.Duration;
  * - Implements proper connection lifecycle management
  */
 @Configuration
+@ConditionalOnProperty(name = "couchbase.enabled", havingValue = "true", matchIfMissing = true)
 public class SimpleCouchbaseConfig {
 
     @Value("${spring.couchbase.connection-string:couchbase://localhost}")

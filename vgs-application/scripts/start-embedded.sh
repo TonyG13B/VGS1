@@ -71,7 +71,7 @@ mvn clean package -DskipTests || {
 echo "Starting Embedded Document Service on port 5100..."
 nohup java -Xms1g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
     -jar target/embedded-document-pattern-1.0.0.jar \
-    --spring.profiles.active=replit \
+    --spring.profiles.active=prod \
     > logs/embedded-document.log 2>&1 &
 
 SERVICE_PID=$!

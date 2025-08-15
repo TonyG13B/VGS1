@@ -71,7 +71,7 @@ mvn clean package -DskipTests || {
 echo "Starting Transaction Index Service on port 5300..."
 nohup java -Xms1g -Xmx2g -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+OptimizeStringConcat \
     -jar target/transaction-index-pattern-1.0.0.jar \
-    --spring.profiles.active=replit \
+    --spring.profiles.active=prod \
     > logs/transaction-index.log 2>&1 &
 
 SERVICE_PID=$!

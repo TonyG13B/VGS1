@@ -5,10 +5,10 @@ server:
   address: 0.0.0.0
 
 spring:
-  profiles:
-    active: prod
   application:
     name: vgs-embedded-production
+  main:
+    allow-bean-definition-overriding: true
 
 # Optimized for AWS environment
 couchbase:

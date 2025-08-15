@@ -49,6 +49,6 @@ summary = {
     "http_request_p95_ms": sorted(lat)[int(0.95 * len(lat))] if lat else 0,
 }
 
-with open("/workspace/benchmark-testing/benchmark_summary.json", "w") as f:
+with open("benchmark_summary.json", "w") as f:
     json.dump(summary, f)
 print(json.dumps(summary, indent=2))

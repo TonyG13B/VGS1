@@ -1,0 +1,18 @@
+2025-08-14 13:06:16.674 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - Starting EmbeddedDocumentApplication v1.0.0 using Java 21.0.8 with PID 72633 (/home/tony/VGS-KV/VGS-KV/vgs-application/embedded-document/target/embedded-document-pattern-1.0.0.jar started by tony in /home/tony/VGS-KV/VGS-KV/vgs-application/embedded-document)
+2025-08-14 13:06:16.677 [main] INFO  c.v.k.e.EmbeddedDocumentApplication - The following 1 profile is active: "test"
+2025-08-14 13:06:20.048 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'couchbaseHealthIndicator' defined in URL [jar:nested:/home/tony/VGS-KV/VGS-KV/vgs-application/embedded-document/target/embedded-document-pattern-1.0.0.jar/!BOOT-INF/classes/!/com/vgs/kvpoc/embedded/health/CouchbaseHealthIndicator.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.couchbase.client.java.Cluster' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2025-08-14 13:06:20.150 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.vgs.kvpoc.embedded.health.CouchbaseHealthIndicator required a bean of type 'com.couchbase.client.java.Cluster' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.couchbase.client.java.Cluster' in your configuration.
+

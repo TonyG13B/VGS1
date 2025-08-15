@@ -6,6 +6,7 @@ import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.manager.collection.CollectionManager;
 import com.couchbase.client.java.manager.collection.CollectionSpec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -14,6 +15,7 @@ import jakarta.annotation.PostConstruct;
  * Initialize required collections for VGS POC
  */
 @Component
+@ConditionalOnProperty(name = "couchbase.enabled", havingValue = "true", matchIfMissing = true)
 public class CollectionInitializer {
     
     @Autowired

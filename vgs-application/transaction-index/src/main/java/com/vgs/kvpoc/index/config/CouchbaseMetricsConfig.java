@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Configuration
 @EnableScheduling
+@ConditionalOnProperty(name = "couchbase.enabled", havingValue = "true", matchIfMissing = true)
 public class CouchbaseMetricsConfig {
 
     private final MeterRegistry meterRegistry;
