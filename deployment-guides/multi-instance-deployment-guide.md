@@ -302,8 +302,8 @@ COUCHBASE_GAME_TRANSACTIONS_COLLECTION=game_transactions
 ```bash
 # Download and run the configuration script
 cd ~/VGS1
-chmod +x setup-couchbase-config.sh
-./setup-couchbase-config.sh
+chmod +x scripts/setup-couchbase-config.sh
+./scripts/setup-couchbase-config.sh
 ```
 
 **This script will automatically:**
